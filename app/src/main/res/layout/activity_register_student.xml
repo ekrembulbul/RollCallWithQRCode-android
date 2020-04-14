@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Student.RegisterStudentActivity">
+
+    <TextView
+        android:id="@+id/register_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:text="Register"
+        android:textColor="@android:color/primary_text_light"
+        android:textSize="36sp"
+        app:fontFamily="casual"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/name_input_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/name_input"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/sId_input_register"
+        app:layout_constraintStart_toStartOf="@+id/sId_input_register"
+        app:layout_constraintTop_toBottomOf="@+id/sId_input_register" />
+
+    <EditText
+        android:id="@+id/surname_input_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/surname_input"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/name_input_register"
+        app:layout_constraintStart_toStartOf="@+id/name_input_register"
+        app:layout_constraintTop_toBottomOf="@+id/name_input_register" />
+
+    <EditText
+        android:id="@+id/email_input_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/email_input"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/surname_input_register"
+        app:layout_constraintStart_toStartOf="@+id/surname_input_register"
+        app:layout_constraintTop_toBottomOf="@+id/surname_input_register" />
+
+    <EditText
+        android:id="@+id/password_input_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/password_input"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/email_input_register"
+        app:layout_constraintStart_toStartOf="@+id/email_input_register"
+        app:layout_constraintTop_toBottomOf="@+id/email_input_register" />
+
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/register_button"
+        app:layout_constraintEnd_toEndOf="@+id/password_input_register"
+        app:layout_constraintStart_toStartOf="@+id/password_input_register"
+        app:layout_constraintTop_toBottomOf="@+id/password_input_register" />
+
+    <EditText
+        android:id="@+id/sId_input_register"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:ems="10"
+        android:hint="@string/sId_input"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/register_text" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_register"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

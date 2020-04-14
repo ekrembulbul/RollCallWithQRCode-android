@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Senior Project</string>
+
+    <string name="login_button">Login</string>
+    <string name="register_button">Register</string>
+    <string name="verify_button">Verify</string>
+    <string name="send_verification_button">Send verification email again</string>
+    <string name="sign_out_button">Sign Out</string>
+
+    <string name="name_input">Name</string>
+    <string name="sId_input">Student ID</string>
+    <string name="surname_input">Surname</string>
+    <string name="email_input">Email</string>
+    <string name="password_input">Password</string>
+
+    <string name="login_text">Login</string>
+    <string name="register_teacher_text">Teacher Register</string>
+    <string name="register_student_text">Student Register</string>
+    <string name="info_verify">Please check your email to verify your account and press the <b>VERIFY</b> button.</string>
+
+    <string name="sign_out">Sign Out</string>
+
+    <string name="verify_label">Verify</string>
+
+    <string-array name="degree_array">
+        <item>Prof.Dr.</item>
+        <item>Doc.Dr.</item>
+        <item>Dr.Ogr.Uyesi</item>
+    </string-array>
+</resources>
