@@ -12,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.senior.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,9 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class AddLessonActivity extends AppCompatActivity {
+public class AddLessonTeacherActivity extends AppCompatActivity {
 
     EditText lessonCode;
     ProgressBar mProgressBar;
@@ -44,48 +48,67 @@ public class AddLessonActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                screenLock();
                 addLesson();
-                finish();
             }
         });
     }
 
     private void addLesson() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        reference.child(lessonCode.getText().toString()).child("teacher").setValue(user.getDisplayName());
+        if (lessonCode.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Enter lesson code!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        String path = user.getDisplayName() + "/registeredLesson";
+        screenLock();
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String path = "lessons/" + lessonCode.getText().toString() + "/teacher";
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.setValue(user.getDisplayName());
+
+        path = "teachers/" + user.getDisplayName() + "/registeredLesson";
         final DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);
         regLessonRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, String> hmRegisteredLessons = new HashMap<>();
-                int counter = 1;
+                ArrayList<String> alRegisteredLessons = new ArrayList<>();
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                    hmRegisteredLessons.put(ds.getKey(), ds.getValue(String.class));
-                    counter++;
+                    alRegisteredLessons.add(ds.getValue(String.class));
                 }
 
-                hmRegisteredLessons.put(Integer.toString(counter), lessonCode.getText().toString());
-                regLessonRef.setValue(hmRegisteredLessons);
+                for(String lesson : alRegisteredLessons) {
+                    if (lesson.compareTo(lessonCode.getText().toString()) == 0) {
+                        Toast.makeText(AddLessonTeacherActivity.this, "Lesson already exist!", Toast.LENGTH_SHORT).show();
+                        screenUnlock();
+                        return;
+                    }
+                }
 
-                Toast.makeText(AddLessonActivity.this, "Lesson added", Toast.LENGTH_LONG).show();
-                finish();
+                alRegisteredLessons.add(lessonCode.getText().toString());
+                regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(AddLessonTeacherActivity.this, "Lesson added", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(AddLessonActivity.this, "Lesson could not be added", Toast.LENGTH_LONG).show();
+                Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        //reference.child(user.getDisplayName()).child("registeredLessons").
     }
 
     private void screenLock() {
         mProgressBar.setVisibility(View.VISIBLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    private void screenUnlock() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

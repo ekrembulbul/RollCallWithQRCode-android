@@ -7,18 +7,27 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:label="@string/app_name">
         <activity
-            android:name=".Teacher.AddLessonActivity"
+            android:name=".Student.RegisterLessonStudentActivity"
+            android:label="Register Lesson"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Student.StudentLessonsActivity"
+            android:label="Lessons"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Teacher.AddLessonTeacherActivity"
             android:label="Add Lesson"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Student.MainStudentActivity"
-            android:label="Main"
+            android:label="QR Code Reader"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Teacher.MainTeacherActivity"
-            android:label="Main"
+            android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Teacher.RegisterTeacherActivity"

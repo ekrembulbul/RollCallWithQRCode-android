@@ -7,10 +7,10 @@
     tools:context=".Teacher.MainTeacherActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_teacher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="64dp"
         android:clickable="true"
         android:focusable="true"
         app:fabCustomSize="64dp"
@@ -19,4 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:maxImageSize="32dp"
         app:srcCompat="@drawable/ic_add_white_24dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_teacher"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

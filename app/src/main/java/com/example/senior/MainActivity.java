@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.senior.Student.MainStudentActivity;
 import com.example.senior.Teacher.MainTeacherActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart:success");
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            Log.d(TAG, "inside");
             if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
                 readDataTeachers();
                 readDataStudent();
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
+            Log.d(TAG, "inside");
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             finish();
             startActivity(intent);

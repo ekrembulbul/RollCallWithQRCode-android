@@ -23,8 +23,8 @@
     <string name="verify_label">Verify</string>
 
     <string-array name="degree_array">
-        <item>Prof.Dr.</item>
-        <item>Doc.Dr.</item>
-        <item>Dr.Ogr.Uyesi</item>
+        <item>Prof Dr</item>
+        <item>Doc Dr</item>
+        <item>Dr Ogr Uyesi</item>
     </string-array>
 </resources>

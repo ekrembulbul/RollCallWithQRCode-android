@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.senior.LoginActivity;
 import com.example.senior.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainStudentActivity extends AppCompatActivity {
@@ -24,7 +26,7 @@ public class MainStudentActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_student, menu);
         return true;
     }
 
@@ -38,6 +40,9 @@ public class MainStudentActivity extends AppCompatActivity {
                 finish();
                 startActivity(intent);
                 return true;
+            case R.id.list_lesson:
+                Intent intentList = new Intent(MainStudentActivity.this, StudentLessonsActivity.class);
+                startActivity(intentList);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -48,6 +53,14 @@ public class MainStudentActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
+        FloatingActionButton fab = findViewById(R.id.fab_student);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
     }
 }
