@@ -409,8 +409,6 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
@@ -870,10 +868,6 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.picture: {
-                takePicture();
-                break;
-            }
             case R.id.info: {
                 Activity activity = getActivity();
                 if (null != activity) {
