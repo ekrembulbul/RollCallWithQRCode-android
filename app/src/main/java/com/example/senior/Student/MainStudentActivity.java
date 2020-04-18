@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.senior.Camera.CameraActivity;
 import com.example.senior.LoginActivity;
 import com.example.senior.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -57,7 +58,8 @@ public class MainStudentActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
+                startActivity(intentList);
             }
         });
 

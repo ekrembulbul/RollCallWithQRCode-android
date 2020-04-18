@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="info_massage">@android:color/holo_blue_bright</color>
+
+    <color name="control_background">#cc4285f4</color>
 </resources>
