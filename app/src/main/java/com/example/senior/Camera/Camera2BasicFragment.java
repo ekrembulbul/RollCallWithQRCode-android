@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import android.graphics.Bitmap;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,7 +141,8 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-            Log.d(TAG, "reading...");
+            Bitmap frame = mTextureView.getBitmap();
+            Log.d(TAG, String.valueOf(frame.getPixel(0, 0)));
         }
 
     };
