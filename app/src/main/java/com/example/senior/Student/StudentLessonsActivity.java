@@ -61,12 +61,12 @@ public class StudentLessonsActivity extends AppCompatActivity {
     }
 
     private void init() {
-        setListeners();
-
         recyclerView = findViewById(R.id.recycleView_student);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(StudentLessonsActivity.this);
         recyclerView.setLayoutManager(layoutManager);
+
+        setListeners();
     }
 
     private void setListeners() {

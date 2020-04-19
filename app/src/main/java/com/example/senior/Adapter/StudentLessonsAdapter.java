@@ -5,22 +5,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.senior.R;
+import com.example.senior.Student.StudentStatusActivity;
+import com.google.zxing.client.android.Intents;
 
 import java.util.ArrayList;
 
 public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAdapter.MyViewHolder> {
 
+    private Context _context;
     private ArrayList<String> _registeredLessonList;
     private LayoutInflater inflater;
 
     public StudentLessonsAdapter(Context context, ArrayList<String> registeredLessonList) {
         inflater = LayoutInflater.from(context);
         _registeredLessonList = registeredLessonList;
+        _context = context;
     }
 
     @NonNull
@@ -41,22 +46,26 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
         return _registeredLessonList.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView _lessonCode;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             _lessonCode = itemView.findViewById(R.id.lesson_code_text);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(_context, StudentStatusActivity.class);
+                    intent.putExtra("lesCode", _lessonCode.getText().toString());
+                    _context.startActivity(intent);
+                }
+            });
         }
 
         public void setData(final String selected) {
             this._lessonCode.setText(selected);
-        }
-
-        @Override
-        public void onClick(View v) {
-
         }
     }
 }
