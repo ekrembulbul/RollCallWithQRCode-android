@@ -37,21 +37,10 @@ public class TeacherStatusActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sign_out:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(TeacherStatusActivity.this, LoginActivity.class);
+            case android.R.id.home:
                 finish();
-                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -59,6 +48,8 @@ public class TeacherStatusActivity extends AppCompatActivity {
     }
 
     private void init() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         recyclerView = findViewById(R.id.recycleView_teacher_status);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TeacherStatusActivity.this);

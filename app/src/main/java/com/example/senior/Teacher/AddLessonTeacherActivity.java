@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -39,18 +40,26 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void init() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mProgressBar = findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.INVISIBLE);
         lessonCode = findViewById(R.id.lesson_code_input);
 
         Button add = findViewById(R.id.add_button);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addLesson();
-            }
-        });
+        add.setOnClickListener(v -> addLesson());
     }
 
     private void addLesson() {
@@ -85,11 +94,14 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
                 }
 
                 alRegisteredLessons.add(lessonCode.getText().toString());
-                regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
                         Toast.makeText(AddLessonTeacherActivity.this, "Lesson added", Toast.LENGTH_SHORT).show();
                         finish();
+                    }
+                    else {
+                        Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        screenUnlock();
                     }
                 });
             }

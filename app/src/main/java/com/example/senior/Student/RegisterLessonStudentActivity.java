@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 public class RegisterLessonStudentActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,20 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void init() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         recyclerView = findViewById(R.id.recyclerView_register_lesson);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(RegisterLessonStudentActivity.this);
@@ -46,12 +59,7 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
 
     private void setListeners() {
         FloatingActionButton fab = findViewById(R.id.fab_student_register);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        fab.setOnClickListener(v -> finish());
 
         String path = "teachers";
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);

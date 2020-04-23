@@ -1,5 +1,6 @@
 package com.example.senior.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -55,14 +56,11 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
             super(itemView);
             _date = itemView.findViewById(R.id.lesson_code_text);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(_context, TeacherStatusActivity.class);
-                    intent.putExtra("lesCode", _lesCode);
-                    intent.putExtra("date", _date.getText().toString());
-                    _context.startActivity(intent);
-                }
+            itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(_context, TeacherStatusActivity.class);
+                intent.putExtra("lesCode", _lesCode);
+                intent.putExtra("date", _date.getText().toString());
+                _context.startActivity(intent);
             });
         }
 

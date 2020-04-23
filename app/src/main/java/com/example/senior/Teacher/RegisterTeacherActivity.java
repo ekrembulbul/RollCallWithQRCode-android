@@ -1,11 +1,9 @@
 package com.example.senior.Teacher;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -14,13 +12,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.senior.R;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.senior.Data.User;
+import com.example.senior.R;
 import com.example.senior.VerifyActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -48,7 +45,20 @@ public class RegisterTeacherActivity extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void init() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mProgressBar = findViewById(R.id.progress_bar_register);
@@ -63,36 +73,34 @@ public class RegisterTeacherActivity extends AppCompatActivity {
     }
 
     private void buttonOnClickListener() {
-        findViewById(R.id.register_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                screenLock();
+        findViewById(R.id.register_button).setOnClickListener(v -> {
+            screenLock();
 
-                String degree = sDegree.getSelectedItem().toString();
-                EditText etName = findViewById(R.id.name_input_register);
-                String name = etName.getText().toString();
-                EditText etSurname = findViewById(R.id.surname_input_register);
-                String surname = etSurname.getText().toString();
-                EditText etEmail = findViewById(R.id.email_input_register);
-                String email = etEmail.getText().toString();
-                EditText etPassword = findViewById(R.id.password_input_register);
-                String password = etPassword.getText().toString();
+            String degree = sDegree.getSelectedItem().toString();
+            EditText etName = findViewById(R.id.name_input_register);
+            String name = etName.getText().toString();
+            EditText etSurname = findViewById(R.id.surname_input_register);
+            String surname = etSurname.getText().toString();
+            EditText etEmail = findViewById(R.id.email_input_register);
+            String email = etEmail.getText().toString();
+            EditText etPassword = findViewById(R.id.password_input_register);
+            String password = etPassword.getText().toString();
 
-                if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    screenUnlock();
-                    Toast.makeText(RegisterTeacherActivity.this, "Fill in all blank!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                User user = new User(null, degree, name, surname, email);
-                readDataAndRegister(user, password);
+            if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                screenUnlock();
+                Toast.makeText(RegisterTeacherActivity.this, "Fill in all blank!", Toast.LENGTH_LONG).show();
+                return;
             }
+
+            User user = new User(null, degree, name, surname, email);
+            readDataAndRegister(user, password);
         });
     }
 
     private void readDataAndRegister(final User user, final String password) {
         DatabaseReference reference = mDatabase.getReference("/users/teachers");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<User> readUsers = new ArrayList<>();
@@ -113,21 +121,22 @@ public class RegisterTeacherActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                screenUnlock();
+                Toast.makeText(RegisterTeacherActivity.this, "Database error!\n" + databaseError.toException().getMessage(), Toast.LENGTH_LONG).show();
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
     }
 
-    private void register(final ArrayList<User> readUsers, final User user, final String password) {
-
+    private void register(@NonNull final ArrayList<User> readUsers, final User user, final String password) {
         for (User tmpUser: readUsers) {
             if (tmpUser.degree.compareTo(user.degree) == 0 && tmpUser.name.compareTo(user.name) == 0 && tmpUser.surname.compareTo(user.surname) == 0) {
-                Toast.makeText(RegisterTeacherActivity.this, "Already exist teacher", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterTeacherActivity.this, "Already exist teacher", Toast.LENGTH_LONG).show();
                 screenUnlock();
                 return;
             }
             if (tmpUser.email.compareTo(user.email) == 0) {
-                Toast.makeText(RegisterTeacherActivity.this, "Already exist EMAIL", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterTeacherActivity.this, "Already exist EMAIL", Toast.LENGTH_LONG).show();
                 screenUnlock();
                 return;
             }
@@ -135,50 +144,52 @@ public class RegisterTeacherActivity extends AppCompatActivity {
         createAccount(user, password);
     }
 
-    private void createAccount(final User user, final String password) {
-        mAuth.createUserWithEmailAndPassword(user.email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "createUserWithEmail:success");
+    private void createAccount(@NonNull final User user, final String password) {
+        mAuth.createUserWithEmailAndPassword(user.email, password).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "createUserWithEmail:success");
 
-                    updateAccount(user.degree + " " + user.name + " " + user.surname);
-                    sendEmailVerification();
-                    addUserToDatabase(user);
+                updateAccount(user.degree + " " + user.name + " " + user.surname);
+                addUserToDatabase(user);
+                sendEmailVerification();
 
-                    Intent intent = new Intent(RegisterTeacherActivity.this, VerifyActivity.class);
-                    startActivity(intent);
-                    screenUnlock();
-                }
-                else {
-                    screenUnlock();
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(RegisterTeacherActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
+                Toast.makeText(RegisterTeacherActivity.this, "Registration successful\n" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(RegisterTeacherActivity.this, VerifyActivity.class);
+                startActivity(intent);
+                finish();
+                screenUnlock();
             }
+            else {
+                screenUnlock();
+                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                Toast.makeText(RegisterTeacherActivity.this, "Registration failed!\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+            }
+
         });
     }
 
     private void addUserToDatabase(final User user) {
         DatabaseReference reference = mDatabase.getReference();
         FirebaseUser fUser = mAuth.getCurrentUser();
-        reference.child("users/teachers").child(fUser.getUid()).setValue(user);
-        Log.d(TAG, "addUserToDatabase: success");
+        reference.child("users/teachers").child(fUser.getUid()).setValue(user).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "addUserToDatabase: success");
+            }
+            else {
+                Log.d(TAG, "addUserToDatabase: failed");
+            }
+        });
     }
 
     private void updateAccount(final String name) {
         FirebaseUser user = mAuth.getCurrentUser();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
-        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "User profile updated.");
-                }
-                else {
-                    Log.d(TAG, "User profile could not be updated.");
-                }
+        user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "User profile updated.");
+            }
+            else {
+                Log.d(TAG, "User profile could not be updated.");
             }
         });
     }
@@ -186,24 +197,15 @@ public class RegisterTeacherActivity extends AppCompatActivity {
     private void sendEmailVerification() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) return;
-        currentUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Email sent.");
-                    Toast.makeText(RegisterTeacherActivity.this, "Verification email sent.", Toast.LENGTH_LONG).show();
-                }
-                else if (task.isCanceled()) {
-                    Log.d(TAG, "Email could not be sent.");
-                    Toast.makeText(RegisterTeacherActivity.this, "Verification email could not be sent.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Failure: " + e.getMessage());
-                Toast.makeText(RegisterTeacherActivity.this, "Try again later!", Toast.LENGTH_SHORT).show();
-            }
+        currentUser.sendEmailVerification().addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "Email sent.");
+            Toast.makeText(RegisterTeacherActivity.this, "Verification email sent.", Toast.LENGTH_SHORT).show();
+        }).addOnCanceledListener(() -> {
+            Log.d(TAG, "Email could not be sent.");
+            Toast.makeText(RegisterTeacherActivity.this, "Verification email could not be sent.", Toast.LENGTH_LONG).show();
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "Failure: " + e.getMessage());
+            Toast.makeText(RegisterTeacherActivity.this, "Try again later!\n" + e.getMessage(), Toast.LENGTH_LONG).show();
         });
     }
 

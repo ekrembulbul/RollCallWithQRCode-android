@@ -1,18 +1,18 @@
 package com.example.senior.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.senior.R;
 import com.example.senior.Student.StudentStatusActivity;
-import com.google.zxing.client.android.Intents;
 
 import java.util.ArrayList;
 
@@ -54,13 +54,10 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
             super(itemView);
             _lessonCode = itemView.findViewById(R.id.lesson_code_text);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(_context, StudentStatusActivity.class);
-                    intent.putExtra("lesCode", _lessonCode.getText().toString());
-                    _context.startActivity(intent);
-                }
+            itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(_context, StudentStatusActivity.class);
+                intent.putExtra("lesCode", _lessonCode.getText().toString());
+                _context.startActivity(intent);
             });
         }
 

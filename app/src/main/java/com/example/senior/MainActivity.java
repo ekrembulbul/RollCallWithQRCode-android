@@ -3,10 +3,8 @@ package com.example.senior;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
     private FirebaseAuth mAuth;
-    private FirebaseDatabase mDatabase;
     ProgressBar mProgressBar;
 
     @Override
@@ -50,27 +47,21 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 Intent intent = new Intent(MainActivity.this, VerifyActivity.class);
-                finish();
                 startActivity(intent);
+                finish();
             }
         }
         else {
             Log.d(TAG, "inside");
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            finish();
             startActivity(intent);
+            finish();
         }
     }
 
     private void init() {
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
         mProgressBar = findViewById(R.id.progress_bar_main);
-        buttonOnClickListener();
-    }
-
-    private void buttonOnClickListener() {
-
     }
 
     private void readDataTeachers() {
@@ -81,14 +72,15 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     if (ds.child("email").getValue(String.class).compareTo(FirebaseAuth.getInstance().getCurrentUser().getEmail()) == 0) {
                         Intent intent = new Intent(MainActivity.this, MainTeacherActivity.class);
-                        finish();
                         startActivity(intent);
+                        finish();
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(MainActivity.this, "Database error!\n" + databaseError.toException().getMessage(), Toast.LENGTH_LONG).show();
+                finish();
             }
         });
     }
@@ -101,14 +93,15 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     if (ds.child("email").getValue(String.class).compareTo(FirebaseAuth.getInstance().getCurrentUser().getEmail()) == 0) {
                         Intent intent = new Intent(MainActivity.this, MainStudentActivity.class);
-                        finish();
                         startActivity(intent);
+                        finish();
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(MainActivity.this, "Database error!\n" + databaseError.toException().getMessage(), Toast.LENGTH_LONG).show();
+                finish();
             }
         });
     }

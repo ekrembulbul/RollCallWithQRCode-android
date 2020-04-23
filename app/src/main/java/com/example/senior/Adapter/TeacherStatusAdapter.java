@@ -1,7 +1,6 @@
 package com.example.senior.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.senior.R;
-import com.example.senior.Teacher.TeacherStatusActivity;
 
 import java.util.ArrayList;
 
 public class TeacherStatusAdapter extends RecyclerView.Adapter<TeacherStatusAdapter.MyViewHolder> {
 
-    private Context _context;
     private ArrayList<String> _names;
     private LayoutInflater inflater;
-    private String _lesCode;
 
     public TeacherStatusAdapter(Context context, ArrayList<String> names) {
         inflater = LayoutInflater.from(context);
         _names = names;
-        _context = context;
     }
 
     @NonNull
@@ -54,12 +49,7 @@ public class TeacherStatusAdapter extends RecyclerView.Adapter<TeacherStatusAdap
             super(itemView);
             _name = itemView.findViewById(R.id.lesson_code_text);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
+            itemView.setOnClickListener(view -> {});
         }
 
         public void setData(final String selected) {

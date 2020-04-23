@@ -19,7 +19,7 @@
             android:name=".Teacher.TeacherStatusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.TeacherDataActivity"
+            android:name=".Teacher.TeacherDateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Student.StudentStatusActivity"

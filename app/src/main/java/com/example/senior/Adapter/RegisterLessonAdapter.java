@@ -74,22 +74,15 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
             _teacherName = itemView.findViewById(R.id.lesson_code_text_register2);
             _checkBox = itemView.findViewById(R.id.checkBox_register);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CheckBox cb = v.findViewById(R.id.checkBox_register);
-                    if (cb.isEnabled()) {
-                        _checkBox.toggle();
-                    }
+            itemView.setOnClickListener(v -> {
+                if (_checkBox.isEnabled()) {
+                    _checkBox.toggle();
                 }
             });
 
-            _checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (buttonView.isEnabled() && isChecked) {
-                        alertDialog();
-                    }
+            _checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (buttonView.isEnabled() && isChecked) {
+                    alertDialog();
                 }
             });
         }
@@ -108,32 +101,18 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
 
         public void alertDialog() {
             new AlertDialog.Builder(_context)
-                    .setTitle("Register Lesson")
+                    .setTitle("Register to Lesson")
                     .setMessage("Are you sure you want to register this lesson?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            registerLesson();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            _checkBox.setChecked(false);
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            _checkBox.setChecked(false);
-                        }
-                    })
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> registerLesson())
+                    .setNegativeButton(android.R.string.no, (dialog, which) -> _checkBox.setChecked(false))
+                    .setOnCancelListener(dialog -> _checkBox.setChecked(false))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
 
         public void registerLesson() {
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String path = "lessons/" + _lessonCode.getText().toString() + "/student";
-            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -142,11 +121,40 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                         alRegisteredLessons.add(ds.getValue(String.class));
                     }
 
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     alRegisteredLessons.add(user.getDisplayName());
-                    reference.setValue(alRegisteredLessons).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(_context, "Registered for lesson", Toast.LENGTH_SHORT).show();
+
+                    reference.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String path = "students/" + user.getDisplayName() + "/registeredLesson";
+                            DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);
+                            regLessonRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    ArrayList<String> alRegisteredLessons = new ArrayList<>();
+                                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                                        alRegisteredLessons.add(ds.getValue(String.class));
+                                    }
+
+                                    alRegisteredLessons.add(_lessonCode.getText().toString());
+                                    regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(_context, "Registered for lesson", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                        else {
+                            Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -154,26 +162,6 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-
-            path = "students/" + user.getDisplayName() + "/registeredLesson";
-            final DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);
-            regLessonRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ArrayList<String> alRegisteredLessons = new ArrayList<>();
-                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                        alRegisteredLessons.add(ds.getValue(String.class));
-                    }
-
-                    alRegisteredLessons.add(_lessonCode.getText().toString());
-                    regLessonRef.setValue(alRegisteredLessons);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(_context, "Lesson could not be added\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         }

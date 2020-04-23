@@ -1,20 +1,18 @@
 package com.example.senior.Student;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.senior.Adapter.StudentLessonsAdapter;
-import com.example.senior.LoginActivity;
 import com.example.senior.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,21 +37,10 @@ public class StudentLessonsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sign_out:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(StudentLessonsActivity.this, LoginActivity.class);
+            case android.R.id.home:
                 finish();
-                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -61,6 +48,8 @@ public class StudentLessonsActivity extends AppCompatActivity {
     }
 
     private void init() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         recyclerView = findViewById(R.id.recycleView_student);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(StudentLessonsActivity.this);
@@ -71,12 +60,9 @@ public class StudentLessonsActivity extends AppCompatActivity {
 
     private void setListeners() {
         FloatingActionButton fab = findViewById(R.id.fab_student_add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(StudentLessonsActivity.this, RegisterLessonStudentActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(StudentLessonsActivity.this, RegisterLessonStudentActivity.class);
+            startActivity(intent);
         });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

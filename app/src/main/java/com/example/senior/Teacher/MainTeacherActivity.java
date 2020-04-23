@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.senior.LoginActivity;
 import com.example.senior.R;
 import com.example.senior.Adapter.MainTeacherAdapter;
+import com.example.senior.Student.MainStudentActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,8 +47,7 @@ public class MainTeacherActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sign_out:
                 FirebaseAuth.getInstance().signOut();
@@ -71,12 +71,9 @@ public class MainTeacherActivity extends AppCompatActivity {
 
     private void setListeners() {
         FloatingActionButton fab = findViewById(R.id.fab_teacher);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainTeacherActivity.this, AddLessonTeacherActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(MainTeacherActivity.this, AddLessonTeacherActivity.class);
+            startActivity(intent);
         });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -93,7 +90,6 @@ public class MainTeacherActivity extends AppCompatActivity {
                 RecyclerView.Adapter adapter = new MainTeacherAdapter(MainTeacherActivity.this, regLessonList);
                 recyclerView.setAdapter(adapter);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(MainTeacherActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
