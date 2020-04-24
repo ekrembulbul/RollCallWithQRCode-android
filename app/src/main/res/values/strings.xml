@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Senior Project</string>
+    <string name="app_name">RollCall</string>
 
     <string name="login_button">Login</string>
     <string name="register_button">Register</string>

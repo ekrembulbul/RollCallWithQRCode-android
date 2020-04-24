@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.senior">
+    package="com.example.rollcall">
 
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
@@ -16,62 +16,62 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Teacher.TeacherStatusActivity"
+            android:name="com.example.rollcall.Teacher.TeacherStatusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.TeacherDateActivity"
+            android:name="com.example.rollcall.Teacher.TeacherDateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.StudentStatusActivity"
+            android:name="com.example.rollcall.Student.StudentStatusActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
-        <activity android:name=".Camera.Camera2BasicFragment" />
+        <activity android:name="com.example.rollcall.Camera.Camera2BasicFragment" />
         <activity
-            android:name=".Camera.CameraActivity"
+            android:name="com.example.rollcall.Camera.CameraActivity"
             android:label="Camera"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBarCamera" />
         <activity
-            android:name=".Student.RegisterLessonStudentActivity"
+            android:name="com.example.rollcall.Student.RegisterLessonStudentActivity"
             android:label="Register Lesson"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.StudentLessonsActivity"
+            android:name="com.example.rollcall.Student.StudentLessonsActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.AddLessonTeacherActivity"
+            android:name="com.example.rollcall.Teacher.AddLessonTeacherActivity"
             android:label="Add Lesson"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.MainStudentActivity"
+            android:name="com.example.rollcall.Student.MainStudentActivity"
             android:label="QR Code Reader"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.MainTeacherActivity"
+            android:name="com.example.rollcall.Teacher.MainTeacherActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.RegisterTeacherActivity"
+            android:name="com.example.rollcall.Teacher.RegisterTeacherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".VerifyActivity"
+            android:name="com.example.rollcall.VerifyActivity"
             android:label="@string/verify_label"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.RegisterStudentActivity"
+            android:name="com.example.rollcall.Student.RegisterStudentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.rollcall.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.rollcall.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>
