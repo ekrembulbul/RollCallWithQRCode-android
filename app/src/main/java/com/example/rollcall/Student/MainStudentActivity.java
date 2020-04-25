@@ -102,8 +102,12 @@ public class MainStudentActivity extends AppCompatActivity {
 
     private void updateDatabase(String result) {
         String[] res = result.split(" ");
-        String lesCode = res[0];
-        String date = res[1];
+        if (!res[0].equals("$rollcall$")){
+            Toast.makeText(this, "QR Code is invalid!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String lesCode = res[1];
+        String date = res[2];
 
         screenLock();
 
