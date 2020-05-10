@@ -1,2 +1,4 @@
 include ':app'
 rootProject.name='RollCall'
+include ':OpenCV'
+include ':openCVLibrary3410'

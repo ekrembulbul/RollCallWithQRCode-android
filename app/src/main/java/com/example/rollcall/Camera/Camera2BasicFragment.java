@@ -47,6 +47,13 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -121,9 +128,12 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
      */
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
+        QrCodeDetector qrCodeDetector;
+
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
             openCamera(width, height);
+            qrCodeDetector = new QrCodeDetector();
         }
 
         @Override
@@ -138,8 +148,8 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-            Bitmap frame = mTextureView.getBitmap();
-            Log.d(TAG, String.valueOf(frame.getPixel(0, 0)));
+            Bitmap bitmap = mTextureView.getBitmap();
+            qrCodeDetector.detect(bitmap);
         }
 
     };
@@ -408,7 +418,7 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        mTextureView = view.findViewById(R.id.texture);
     }
 
     @Override
@@ -417,9 +427,33 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
         mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
     }
 
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(getContext()) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    break;
+                default:
+                    super.onManagerConnected(status);
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, getContext(), mLoaderCallback);
+        }
+        else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+
         startBackgroundThread();
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already

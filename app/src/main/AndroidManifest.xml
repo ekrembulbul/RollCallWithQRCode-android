@@ -16,62 +16,66 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.rollcall.Teacher.TeacherStatusActivity"
+            android:name=".CameraOpenCV.OpenCvCameraActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".Teacher.TeacherStatusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Teacher.TeacherDateActivity"
+            android:name=".Teacher.TeacherDateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Student.StudentStatusActivity"
+            android:name=".Student.StudentStatusActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
-        <activity android:name="com.example.rollcall.Camera.Camera2BasicFragment" />
+        <activity android:name=".Camera.Camera2BasicFragment" />
         <activity
-            android:name="com.example.rollcall.Camera.CameraActivity"
+            android:name=".Camera.CameraActivity"
             android:label="Camera"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBarCamera" />
         <activity
-            android:name="com.example.rollcall.Student.RegisterLessonStudentActivity"
+            android:name=".Student.RegisterLessonStudentActivity"
             android:label="Register Lesson"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Student.StudentLessonsActivity"
+            android:name=".Student.StudentLessonsActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Teacher.AddLessonTeacherActivity"
+            android:name=".Teacher.AddLessonTeacherActivity"
             android:label="Add Lesson"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Student.MainStudentActivity"
+            android:name=".Student.MainStudentActivity"
             android:label="QR Code Reader"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Teacher.MainTeacherActivity"
+            android:name=".Teacher.MainTeacherActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Teacher.RegisterTeacherActivity"
+            android:name=".Teacher.RegisterTeacherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name="com.example.rollcall.VerifyActivity"
+            android:name=".VerifyActivity"
             android:label="@string/verify_label"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.rollcall.Student.RegisterStudentActivity"
+            android:name=".Student.RegisterStudentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name="com.example.rollcall.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name="com.example.rollcall.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>

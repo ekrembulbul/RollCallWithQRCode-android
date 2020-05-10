@@ -1,6 +1,8 @@
 package com.example.rollcall.Student;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +15,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.rollcall.Camera.CameraActivity;
+import com.example.rollcall.CameraOpenCV.OpenCvCameraActivity;
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,6 +37,7 @@ import java.util.ArrayList;
 
 public class MainStudentActivity extends AppCompatActivity {
 
+    private final static int CAMERA_REQUEST_CODE = 1;
     ProgressBar mProgressBar;
 
     @Override
@@ -73,15 +80,35 @@ public class MainStudentActivity extends AppCompatActivity {
     private void setListeners() {
         FloatingActionButton fab = findViewById(R.id.fab_student);
         fab.setOnClickListener(view -> {
+
+            if(ContextCompat.checkSelfPermission(MainStudentActivity.this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainStudentActivity.this, new String[] { Manifest.permission.CAMERA }, CAMERA_REQUEST_CODE);
+            }
+            else {
+                Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
+                startActivity(intentList);
+            }
+
             /*
-            Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
-            startActivity(intentList);
-            */
             IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
             integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
             integrator.setOrientationLocked(false);
             integrator.initiateScan();
+            */
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
+                    startActivity(intentList);
+                }
+                return;
+            }
+        }
     }
 
     @Override
@@ -101,6 +128,8 @@ public class MainStudentActivity extends AppCompatActivity {
     }
 
     private void updateDatabase(String result) {
+        Log.d("MainStudentActivity", result);
+        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         String[] res = result.split(" ");
         if (!res[0].equals("$rc$")){
             Toast.makeText(this, "QR Code is invalid!", Toast.LENGTH_LONG).show();
