@@ -24,6 +24,8 @@ out/
 .gradle
 .gradle/
 build/
+OpenCV/build/
+openCVLibrary3410/build/
 
 # Signing files
 .signing/
