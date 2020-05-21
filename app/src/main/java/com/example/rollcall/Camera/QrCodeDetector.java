@@ -16,16 +16,9 @@ import java.util.List;
 
 public class QrCodeDetector {
 
-    private int BLUR_VALUE = 3;
-    private float SQUARE_TOLERANCE = 0.15f;
-    private float AREA_TOLERANCE = 0.15f;
-    private float DISTANCE_TOLERANCE = 0.25f;
-    private int WARP_DIM = 300;
-    private int SMALL_DIM = 29;
-
     private final static String TAG = "QrCodeDetector";
 
     public void detect(Bitmap bitmap) {
-        
+
     }
 }
