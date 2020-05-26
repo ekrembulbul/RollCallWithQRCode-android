@@ -1,4 +1,4 @@
-package com.example.rollcall.Adapter;
+package com.example.rollcall.Student.RegisterLessonStudent;
 
 import android.app.Activity;
 import android.app.AlertDialog;

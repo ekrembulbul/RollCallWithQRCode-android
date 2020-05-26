@@ -1,19 +1,17 @@
-package com.example.rollcall.Student;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
+package com.example.rollcall.Student.StudentStatus;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rollcall.Adapter.StudentLessonsAdapter;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,14 +22,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class StudentLessonsActivity extends AppCompatActivity {
+public class StudentStatusActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_lessons);
+        setContentView(R.layout.activity_student_status);
         init();
     }
 
@@ -49,44 +47,43 @@ public class StudentLessonsActivity extends AppCompatActivity {
     private void init() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        recyclerView = findViewById(R.id.recycleView_student);
+        recyclerView = findViewById(R.id.recycleView_student_status);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(StudentLessonsActivity.this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(StudentStatusActivity.this);
         recyclerView.setLayoutManager(layoutManager);
 
         setListeners();
     }
 
     private void setListeners() {
-        FloatingActionButton fab = findViewById(R.id.fab_student_add);
-        fab.setOnClickListener(view -> {
-            Intent intent = new Intent(StudentLessonsActivity.this, RegisterLessonStudentActivity.class);
-            startActivity(intent);
-        });
+        Intent intent = getIntent();
+        String lesCode = intent.getStringExtra("lesCode");
+
+        setTitle(lesCode);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Intent intent = new Intent(StudentLessonsActivity.this, LoginActivity.class);
+            Intent intentL = new Intent(StudentStatusActivity.this, LoginActivity.class);
             finish();
-            startActivity(intent);
+            startActivity(intentL);
         }
-        String path = "students/" + user.getDisplayName() + "/registeredLesson";
+        String path = "students/" + user.getDisplayName() + "/status/" + lesCode;
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> regLessonList = new ArrayList<>();
+                ArrayList<String> dates = new ArrayList<>();
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                    regLessonList.add(ds.getValue(String.class));
+                    dates.add(ds.getValue(String.class));
                 }
 
-                RecyclerView.Adapter adapter = new StudentLessonsAdapter(StudentLessonsActivity.this, regLessonList);
+                RecyclerView.Adapter adapter = new StudentStatusAdapter(StudentStatusActivity.this, dates);
                 recyclerView.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(StudentLessonsActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(StudentStatusActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

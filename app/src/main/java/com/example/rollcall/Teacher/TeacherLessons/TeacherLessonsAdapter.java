@@ -1,4 +1,4 @@
-package com.example.rollcall.Adapter;
+package com.example.rollcall.Teacher.TeacherLessons;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,17 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rollcall.R;
-import com.example.rollcall.Student.StudentStatusActivity;
+import com.example.rollcall.Teacher.TeacherDate.TeacherDateActivity;
 
 import java.util.ArrayList;
 
-public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAdapter.MyViewHolder> {
+public class TeacherLessonsAdapter extends RecyclerView.Adapter<TeacherLessonsAdapter.MyViewHolder> {
 
-    private Context _context;
     private ArrayList<String> _registeredLessonList;
     private LayoutInflater inflater;
+    private Context _context;
 
-    public StudentLessonsAdapter(Context context, ArrayList<String> registeredLessonList) {
+    public TeacherLessonsAdapter(Context context, ArrayList<String> registeredLessonList) {
         inflater = LayoutInflater.from(context);
         _registeredLessonList = registeredLessonList;
         _context = context;
@@ -29,14 +29,14 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
 
     @NonNull
     @Override
-    public StudentLessonsAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.lesson_item, parent, false);
-        StudentLessonsAdapter.MyViewHolder holder = new StudentLessonsAdapter.MyViewHolder(view);
+        MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StudentLessonsAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.setData(_registeredLessonList.get(position));
     }
 
@@ -54,7 +54,7 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
             _lessonCode = itemView.findViewById(R.id.lesson_code_text);
 
             itemView.setOnClickListener(view -> {
-                Intent intent = new Intent(_context, StudentStatusActivity.class);
+                Intent intent = new Intent(_context, TeacherDateActivity.class);
                 intent.putExtra("lesCode", _lessonCode.getText().toString());
                 _context.startActivity(intent);
             });

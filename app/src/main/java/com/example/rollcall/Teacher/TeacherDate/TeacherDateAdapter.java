@@ -1,4 +1,4 @@
-package com.example.rollcall.Adapter;
+package com.example.rollcall.Teacher.TeacherDate;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rollcall.R;
-import com.example.rollcall.Teacher.TeacherStatusActivity;
+import com.example.rollcall.Teacher.TeacherStatus.TeacherStatusActivity;
 
 import java.util.ArrayList;
 

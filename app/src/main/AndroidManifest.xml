@@ -20,13 +20,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Teacher.TeacherStatusActivity"
+            android:name=".Teacher.TeacherStatus.TeacherStatusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.TeacherDateActivity"
+            android:name=".Teacher.TeacherDate.TeacherDateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.StudentStatusActivity"
+            android:name=".Student.StudentStatus.StudentStatusActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -39,11 +39,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBarCamera" />
         <activity
-            android:name=".Student.RegisterLessonStudentActivity"
+            android:name=".Student.RegisterLessonStudent.RegisterLessonStudentActivity"
             android:label="Register Lesson"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Student.StudentLessonsActivity"
+            android:name=".Student.StudentLesson.StudentLessonsActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
@@ -55,7 +55,7 @@
             android:label="QR Code Reader"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Teacher.MainTeacherActivity"
+            android:name=".Teacher.TeacherLessons.TeacherLessonsActivity"
             android:label="Lessons"
             android:screenOrientation="portrait" />
         <activity
