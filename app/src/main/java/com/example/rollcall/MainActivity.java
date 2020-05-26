@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rollcall.Student.MainStudentActivity;
-import com.example.rollcall.Teacher.MainTeacherActivity;
+import com.example.rollcall.Teacher.TeacherLessons.TeacherLessonsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     if (ds.child("email").getValue(String.class).compareTo(FirebaseAuth.getInstance().getCurrentUser().getEmail()) == 0) {
-                        Intent intent = new Intent(MainActivity.this, MainTeacherActivity.class);
+                        Intent intent = new Intent(MainActivity.this, TeacherLessonsActivity.class);
                         startActivity(intent);
                         finish();
                     }

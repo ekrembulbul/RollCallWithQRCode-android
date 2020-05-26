@@ -1,4 +1,4 @@
-package com.example.rollcall.Teacher;
+package com.example.rollcall.Teacher.TeacherDate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.rollcall.Adapter.TeacherDateAdapter;
-import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

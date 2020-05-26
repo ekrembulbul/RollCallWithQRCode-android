@@ -1,4 +1,4 @@
-package com.example.rollcall.Student;
+package com.example.rollcall.Student.RegisterLessonStudent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.rollcall.Adapter.RegisterLessonAdapter;
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

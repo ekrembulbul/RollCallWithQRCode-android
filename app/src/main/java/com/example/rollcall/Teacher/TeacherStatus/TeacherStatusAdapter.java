@@ -1,4 +1,4 @@
-package com.example.rollcall.Adapter;
+package com.example.rollcall.Teacher.TeacherStatus;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -19,9 +19,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.rollcall.Camera.CameraActivity;
-import com.example.rollcall.CameraOpenCV.OpenCvCameraActivity;
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
+import com.example.rollcall.Student.StudentLesson.StudentLessonsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -85,16 +85,16 @@ public class MainStudentActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(MainStudentActivity.this, new String[] { Manifest.permission.CAMERA }, CAMERA_REQUEST_CODE);
             }
             else {
+                /*
                 Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
                 startActivity(intentList);
-            }
+                */
 
-            /*
-            IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
-            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-            integrator.setOrientationLocked(false);
-            integrator.initiateScan();
-            */
+                IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+                integrator.setOrientationLocked(false);
+                integrator.initiateScan();
+            }
         });
     }
 
@@ -128,7 +128,7 @@ public class MainStudentActivity extends AppCompatActivity {
     }
 
     private void updateDatabase(String result) {
-        Log.d("MainStudentActivity", result);
+        //Log.d("MainStudentActivity", result);
         Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         String[] res = result.split(" ");
         if (!res[0].equals("$rc$")){

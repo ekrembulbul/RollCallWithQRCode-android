@@ -1,4 +1,4 @@
-package com.example.rollcall.Teacher;
+package com.example.rollcall.Teacher.TeacherStatus;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.rollcall.Adapter.TeacherStatusAdapter;
 import com.example.rollcall.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
