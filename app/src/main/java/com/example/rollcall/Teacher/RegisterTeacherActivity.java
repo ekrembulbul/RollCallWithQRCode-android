@@ -46,20 +46,7 @@ public class RegisterTeacherActivity extends AppCompatActivity {
         init();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void init() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mProgressBar = findViewById(R.id.progress_bar_register);
@@ -154,7 +141,7 @@ public class RegisterTeacherActivity extends AppCompatActivity {
                 addUserToDatabase(user);
                 sendEmailVerification();
 
-                Toast.makeText(RegisterTeacherActivity.this, "Registration successful\n" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterTeacherActivity.this, "Registration successful\n", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(RegisterTeacherActivity.this, VerifyActivity.class);
                 startActivity(intent);
                 finish();
@@ -198,6 +185,9 @@ public class RegisterTeacherActivity extends AppCompatActivity {
         user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d(TAG, "User profile updated.");
+
+                DatabaseReference reference = mDatabase.getReference("teachers/" + user.getDisplayName() + "/validate");
+                reference.setValue(false);
             }
             else {
                 Log.d(TAG, "User profile could not be updated.");

@@ -16,6 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".Teacher.TeacherValidationInfoActivity"
+            android:label="Info"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Teacher.TeacherValidateAdmin.TeacherValidateAdminActivity"
+            android:label="Validation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".CameraOpenCV.OpenCvCameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoActionBar" />

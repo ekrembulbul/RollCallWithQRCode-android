@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
+import com.example.rollcall.Student.RegisterStudentActivity;
 import com.example.rollcall.Teacher.AddLessonTeacherActivity;
+import com.example.rollcall.Teacher.TeacherValidateAdmin.TeacherValidateAdminActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,16 +42,31 @@ public class TeacherLessonsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            finish();
+            startActivity(intent);
+        }
+        if (user.getEmail().equals("ekrem.bulbul.52@gmail.com")) {
+            inflater.inflate(R.menu.menu_teacher_lessons, menu);
+        }
+        else {
+            inflater.inflate(R.menu.menu, menu);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.validate_teahcer:
+                Intent intent = new Intent(this, TeacherValidateAdminActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.sign_out:
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(TeacherLessonsActivity.this, LoginActivity.class);
+                intent = new Intent(this, LoginActivity.class);
                 finish();
                 startActivity(intent);
                 return true;
