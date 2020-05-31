@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.rollcall.LoginActivity;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 public class RegisterLessonStudentActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,9 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(RegisterLessonStudentActivity.this);
         recyclerView.setLayoutManager(layoutManager);
+
+        mProgressBar = findViewById(R.id.progress_bar_register_lesson);
+        mProgressBar.setVisibility(View.INVISIBLE);
 
         setListeners();
     }
@@ -108,5 +115,15 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
                 Toast.makeText(RegisterLessonStudentActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void screenLock() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    public void screenUnlock() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

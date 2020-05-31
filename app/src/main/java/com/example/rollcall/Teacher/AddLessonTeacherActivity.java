@@ -49,6 +49,8 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
     Spinner numberOfLessonDay;
     int dayCount;
     ArrayList<ArrayList<String>> dateList;
+    EditText lessonNumberOfWeek;
+    ArrayList<ArrayList<String>> daysAndTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +100,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
         Button add = findViewById(R.id.add_button);
         add.setOnClickListener(v -> {
             calculateDates();
-            //addLesson();
+            addLesson();
         });
     }
 
@@ -160,7 +162,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
     }
 
     private void calculateDates() {
-        EditText lessonNumberOfWeek = findViewById(R.id.number_of_week_input);
+        lessonNumberOfWeek = findViewById(R.id.number_of_week_input);
         if (lessonNumberOfWeek.getText().toString().isEmpty()) {
             Toast.makeText(this, "Enter number of week of lesson!", Toast.LENGTH_LONG).show();
             return;
@@ -182,12 +184,19 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
 
         dateList = new ArrayList<>();
         ArrayList<String> dates = new ArrayList<>();
-        ArrayList<String> startTimes = new ArrayList<>();
+        daysAndTimes = new ArrayList<>();
 
         for (int i = 0; i < Integer.parseInt((String) numberOfLessonDay.getSelectedItem()); i++) {
             TextView twDate = viewList.get(i).findViewById(R.id.lesson_date_tw);
             String sDate = twDate.getText().toString();
             String[] date = sDate.split("/");
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
+            calendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
+            int dayOFWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
             sDate = date[2] + "-" + date[1] + "-" + date[0];
             dates.add(sDate);
 
@@ -195,7 +204,13 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             String sStartTime = twStartTime.getText().toString();
             String[] time = sStartTime.split(":");
             sStartTime = time[0] + "-" + time[1];
-            startTimes.add(sStartTime);
+
+            ArrayList<String> dayAndTime = new ArrayList<>();
+            dayAndTime.add(String.valueOf(dayOFWeek));
+            dayAndTime.add(sStartTime);
+            Spinner spinner = viewList.get(i).findViewById(R.id.spinner_number_of_lesson);
+            dayAndTime.add(String.valueOf(spinner.getSelectedItem()));
+            daysAndTimes.add(dayAndTime);
         }
 
         dateList.add(dates);
@@ -216,6 +231,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
         }
 
         Log.d("dateListTest", dateList.toString());
+        Log.d("daysAndTimes", daysAndTimes.toString());
     }
 
     private void addLesson() {
@@ -259,15 +275,62 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         });
 
-        path = "lessons/" + lessonCode.getText().toString() + "/name";
+        path = "lessons/" + lessonCode.getText().toString() + "/numberOfWeek";
         reference = FirebaseDatabase.getInstance().getReference(path);
-        reference.setValue(lessonName.getText().toString()).addOnCompleteListener(task -> {
+        reference.setValue(lessonNumberOfWeek.getText().toString()).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
                 Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 screenUnlock();
                 return;
             }
         });
+
+        path = "lessons/" + lessonCode.getText().toString() + "/dates";
+        reference = FirebaseDatabase.getInstance().getReference(path);
+        for (int i = 0; i < dateList.size(); i++) {
+            for (int j = 0; j < daysAndTimes.size(); j++) {
+                for (int k = 0; k < Integer.parseInt(daysAndTimes.get(j).get(2)) ; k++) {
+                    String time = daysAndTimes.get(j).get(1);
+                    String[] splitTime = time.split("-");
+                    splitTime[0] = String.valueOf(Integer.parseInt(splitTime[0]) + k);
+                    time = splitTime[0] + "-" + splitTime[1];
+
+                    reference.child(String.valueOf(i)).child(dateList.get(i).get(j)).child(time).child("active").setValue(false).addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()){
+                            Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            screenUnlock();
+                            return;
+                        }
+                    });
+                }
+            }
+        }
+
+        path = "lessons/" + lessonCode.getText().toString() + "/dayAndTime";
+        reference = FirebaseDatabase.getInstance().getReference(path);
+        for (int i = 0; i < daysAndTimes.size(); i++) {
+            reference.child(String.valueOf(i)).child("day").setValue(daysAndTimes.get(i).get(0)).addOnCompleteListener(task -> {
+                if (!task.isSuccessful()){
+                    Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    screenUnlock();
+                    return;
+                }
+            });
+            reference.child(String.valueOf(i)).child("time").setValue(daysAndTimes.get(i).get(1)).addOnCompleteListener(task -> {
+                if (!task.isSuccessful()){
+                    Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    screenUnlock();
+                    return;
+                }
+            });
+            reference.child(String.valueOf(i)).child("numberOfLesson").setValue(daysAndTimes.get(i).get(2)).addOnCompleteListener(task -> {
+                if (!task.isSuccessful()){
+                    Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    screenUnlock();
+                    return;
+                }
+            });
+        }
 
         path = "teachers/" + user.getDisplayName() + "/registeredLesson";
         final DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);

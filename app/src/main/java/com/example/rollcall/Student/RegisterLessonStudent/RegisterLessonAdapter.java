@@ -107,6 +107,86 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
         }
 
         public void registerLesson() {
+            ((RegisterLessonStudentActivity)_context).screenLock();
+            updateLessonStatus();
+        }
+
+        private void updateLessonStatus() {
+            String path = "lessons/" + _lessonCode.getText().toString();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<ArrayList<String>> daysAndTimes = new ArrayList<>();
+                    for (DataSnapshot ds: dataSnapshot.child("dayAndTime").getChildren()) {
+                        ArrayList<String> dayAndTime = new ArrayList<>();
+                        dayAndTime.add(ds.child("day").getValue(String.class));
+                        dayAndTime.add(ds.child("numberOfLesson").getValue(String.class));
+                        dayAndTime.add(ds.child("time").getValue(String.class));
+                        daysAndTimes.add(dayAndTime);
+                    }
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user == null) {
+                        Intent intent = new Intent(_context, LoginActivity.class);
+                        ((Activity) _context).finish();
+                        _context.startActivity(intent);
+                    }
+
+                    for (DataSnapshot ds: dataSnapshot.child("dates").getChildren()) {
+                        for (DataSnapshot dsC: ds.getChildren()) {
+                            for (DataSnapshot dsCC: dsC.getChildren()) {
+                                String path = "lessons/" + _lessonCode.getText().toString() + "/dates/" + ds.getKey() + "/" + dsC.getKey() + "/" + dsCC.getKey() + "/status";
+                                updateEachLessonTimeStatus(path);
+
+                                path = "students/" + user.getDisplayName() + "/status/" + _lessonCode.getText().toString() + "/" + ds.getKey() + "/" + dsC.getKey() + "/" + dsCC.getKey();
+                                updateEachStudentTimeStatus(path);
+                            }
+                        }
+                    }
+
+                    updateLesson();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    ((RegisterLessonStudentActivity)_context).screenUnlock();
+                }
+            });
+        }
+
+        private void updateEachLessonTimeStatus(String path) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Intent intent = new Intent(_context, LoginActivity.class);
+                ((Activity) _context).finish();
+                _context.startActivity(intent);
+            }
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path + "/" + user.getDisplayName());
+            reference.setValue(0).addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        private void updateEachStudentTimeStatus(String path) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Intent intent = new Intent(_context, LoginActivity.class);
+                ((Activity) _context).finish();
+                _context.startActivity(intent);
+            }
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+            reference.setValue(0).addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        private void updateLesson() {
             String path = "lessons/" + _lessonCode.getText().toString() + "/student";
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -127,35 +207,11 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
 
                     reference.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            String path = "students/" + user.getDisplayName() + "/registeredLesson";
-                            DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);
-                            regLessonRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    ArrayList<String> alRegisteredLessons = new ArrayList<>();
-                                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                                        alRegisteredLessons.add(ds.getValue(String.class));
-                                    }
-
-                                    alRegisteredLessons.add(_lessonCode.getText().toString());
-                                    regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(_context, "Registered for lesson", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            });
+                            updateStudent();
                         }
                         else {
                             Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            ((RegisterLessonStudentActivity)_context).screenUnlock();
                         }
                     });
                 }
@@ -163,6 +219,46 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    ((RegisterLessonStudentActivity)_context).screenUnlock();
+                }
+            });
+        }
+
+        private void updateStudent() {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Intent intent = new Intent(_context, LoginActivity.class);
+                ((Activity) _context).finish();
+                _context.startActivity(intent);
+            }
+
+            String path = "students/" + user.getDisplayName() + "/registeredLesson";
+            DatabaseReference regLessonRef = FirebaseDatabase.getInstance().getReference(path);
+            regLessonRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<String> alRegisteredLessons = new ArrayList<>();
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        alRegisteredLessons.add(ds.getValue(String.class));
+                    }
+
+                    alRegisteredLessons.add(_lessonCode.getText().toString());
+                    regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(_context, "Registered for lesson", Toast.LENGTH_SHORT).show();
+                            ((RegisterLessonStudentActivity)_context).screenUnlock();
+                        }
+                        else {
+                            Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            ((RegisterLessonStudentActivity)_context).screenUnlock();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    ((RegisterLessonStudentActivity)_context).screenUnlock();
                 }
             });
         }
