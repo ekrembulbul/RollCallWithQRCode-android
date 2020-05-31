@@ -1,5 +1,6 @@
 package com.example.rollcall;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rollcall.Student.MainStudentActivity;
 import com.example.rollcall.Teacher.TeacherLessons.TeacherLessonsActivity;
+import com.example.rollcall.Teacher.TeacherValidationInfoActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -71,10 +73,42 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     if (ds.child("email").getValue(String.class).compareTo(FirebaseAuth.getInstance().getCurrentUser().getEmail()) == 0) {
-                        Intent intent = new Intent(MainActivity.this, TeacherLessonsActivity.class);
-                        startActivity(intent);
-                        finish();
+                        checkValidate();
                     }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(MainActivity.this, "Database error!\n" + databaseError.toException().getMessage(), Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
+    }
+
+    private void checkValidate() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            finish();
+            startActivity(intent);
+        }
+        String path = "teachers/" + user.getDisplayName() + "/validate";
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean flag = false;
+                if (dataSnapshot.getValue(Boolean.class) != null)
+                    flag = dataSnapshot.getValue(Boolean.class);
+                if (flag) {
+                    Intent intent = new Intent(MainActivity.this, TeacherLessonsActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    Intent intent = new Intent(MainActivity.this, TeacherValidationInfoActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
             @Override

@@ -2,14 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,48 +20,36 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/lesson_code_text_register"
+                android:id="@+id/teacher_validate_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:text="TextView"
                 android:textColor="@android:color/primary_text_light"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/checkBox_register"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/lesson_code_text_register2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:text="TextView"
-                android:textColor="@android:color/secondary_text_light"
-                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/lesson_code_text_register"
-                app:layout_constraintStart_toStartOf="@+id/lesson_code_text_register"
-                app:layout_constraintTop_toBottomOf="@+id/lesson_code_text_register" />
-
-            <CheckBox
-                android:id="@+id/checkBox_register"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/fab_teacher_validate"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_teacher_validate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_done_black_24dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

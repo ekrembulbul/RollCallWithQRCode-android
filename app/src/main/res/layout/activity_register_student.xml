@@ -31,6 +31,7 @@
         android:ems="10"
         android:hint="@string/name_input"
         android:inputType="textPersonName"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/sId_input_register"
         app:layout_constraintStart_toStartOf="@+id/sId_input_register"
         app:layout_constraintTop_toBottomOf="@+id/sId_input_register" />
@@ -43,6 +44,7 @@
         android:ems="10"
         android:hint="@string/surname_input"
         android:inputType="textPersonName"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/name_input_register"
         app:layout_constraintStart_toStartOf="@+id/name_input_register"
         app:layout_constraintTop_toBottomOf="@+id/name_input_register" />
@@ -55,6 +57,7 @@
         android:ems="10"
         android:hint="@string/email_input"
         android:inputType="textEmailAddress"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/surname_input_register"
         app:layout_constraintStart_toStartOf="@+id/surname_input_register"
         app:layout_constraintTop_toBottomOf="@+id/surname_input_register" />
@@ -67,6 +70,7 @@
         android:ems="10"
         android:hint="@string/password_input"
         android:inputType="textPassword"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/email_input_register"
         app:layout_constraintStart_toStartOf="@+id/email_input_register"
         app:layout_constraintTop_toBottomOf="@+id/email_input_register" />
@@ -86,13 +90,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:ems="10"
         android:hint="@string/sId_input"
         android:inputType="number"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

@@ -24,8 +24,8 @@
 
     <string-array name="degree_array">
         <item>Prof Dr</item>
-        <item>Doc Dr</item>
-        <item>Dr Ogr Uyesi</item>
+        <item>Doç Dr</item>
+        <item>Dr Öğr Üyesi</item>
     </string-array>
 
     <string-array name="number_of_lesson_array">

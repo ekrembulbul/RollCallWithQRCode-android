@@ -44,20 +44,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
         init();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void init() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mProgressBar = findViewById(R.id.progress_bar_register);
@@ -148,7 +135,7 @@ public class RegisterStudentActivity extends AppCompatActivity {
                 addUserToDatabase(user);
                 sendEmailVerification();
 
-                Toast.makeText(RegisterStudentActivity.this, "Registration successful\n" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterStudentActivity.this, "Registration successful\n", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(RegisterStudentActivity.this, VerifyActivity.class);
                 startActivity(intent);
                 finish();
