@@ -302,6 +302,13 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
                             return;
                         }
                     });
+                    reference.child(String.valueOf(i)).child(dateList.get(i).get(j)).child(time).child("done").setValue(false).addOnCompleteListener(task -> {
+                        if (!task.isSuccessful()){
+                            Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            screenUnlock();
+                            return;
+                        }
+                    });
                 }
             }
         }

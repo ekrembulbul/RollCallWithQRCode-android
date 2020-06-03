@@ -137,10 +137,16 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                         for (DataSnapshot dsC: ds.getChildren()) {
                             for (DataSnapshot dsCC: dsC.getChildren()) {
                                 String path = "lessons/" + _lessonCode.getText().toString() + "/dates/" + ds.getKey() + "/" + dsC.getKey() + "/" + dsCC.getKey() + "/status";
-                                updateEachLessonTimeStatus(path);
+                                boolean flag = false;
+                                if (dsCC.child("done").getValue(Boolean.class) != null) {
+                                    flag = dsCC.child("done").getValue(Boolean.class);
+                                }
+                                if (flag) updateEachLessonTimeStatus(path, -1);
+                                else updateEachLessonTimeStatus(path, 0);
 
                                 path = "students/" + user.getDisplayName() + "/status/" + _lessonCode.getText().toString() + "/" + ds.getKey() + "/" + dsC.getKey() + "/" + dsCC.getKey();
-                                updateEachStudentTimeStatus(path);
+                                if (flag)  updateEachStudentTimeStatus(path, -1);
+                                else updateEachStudentTimeStatus(path, 0);
                             }
                         }
                     }
@@ -156,7 +162,7 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
             });
         }
 
-        private void updateEachLessonTimeStatus(String path) {
+        private void updateEachLessonTimeStatus(String path, int status) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Intent intent = new Intent(_context, LoginActivity.class);
@@ -164,14 +170,14 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                 _context.startActivity(intent);
             }
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path + "/" + user.getDisplayName());
-            reference.setValue(0).addOnCompleteListener(task -> {
+            reference.setValue(status).addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         }
 
-        private void updateEachStudentTimeStatus(String path) {
+        private void updateEachStudentTimeStatus(String path, int status) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Intent intent = new Intent(_context, LoginActivity.class);
@@ -179,7 +185,7 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
                 _context.startActivity(intent);
             }
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-            reference.setValue(0).addOnCompleteListener(task -> {
+            reference.setValue(status).addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     Toast.makeText(_context, "Could not be register to lesson\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }

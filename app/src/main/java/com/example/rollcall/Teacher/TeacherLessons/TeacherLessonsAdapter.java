@@ -51,7 +51,7 @@ public class TeacherLessonsAdapter extends RecyclerView.Adapter<TeacherLessonsAd
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            _lessonCode = itemView.findViewById(R.id.lesson_code_text);
+            _lessonCode = itemView.findViewById(R.id.lesson_name_studentLesson);
 
             itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(_context, TeacherDateActivity.class);

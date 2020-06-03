@@ -103,8 +103,15 @@ public class MainStudentActivity extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    /*
                     Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
                     startActivity(intentList);
+                    */
+
+                    IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
+                    integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+                    integrator.setOrientationLocked(false);
+                    integrator.initiateScan();
                 }
                 return;
             }
@@ -129,14 +136,16 @@ public class MainStudentActivity extends AppCompatActivity {
 
     private void updateDatabase(String result) {
         //Log.d("MainStudentActivity", result);
-        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         String[] res = result.split(" ");
         if (!res[0].equals("$rc$")){
             Toast.makeText(this, "QR Code is invalid!", Toast.LENGTH_LONG).show();
             return;
         }
         String lesCode = res[1];
-        String date = res[2];
+        String week = res[2];
+        String date = res[3];
+        String time = res[4];
 
         screenLock();
 
@@ -171,7 +180,7 @@ public class MainStudentActivity extends AppCompatActivity {
                 }
 
                 String disName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                String path = "lessons/" + lesCode + "/dates/" + date;
+                String path = "lessons/" + lesCode + "/dates/" + week + "/" + date + "/" + time;
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -187,56 +196,25 @@ public class MainStudentActivity extends AppCompatActivity {
                             return;
                         }
 
-                        ArrayList<String> students = new ArrayList<>();
-                        for (DataSnapshot ds: dataSnapshot.child("status").getChildren()) {
-                            students.add(ds.getValue(String.class));
+                        if (dataSnapshot.child("status").child(disName).getValue(Integer.class) == 1) {
+                            Toast.makeText(MainStudentActivity.this, "Already done!", Toast.LENGTH_LONG).show();
+                            screenUnlock();
+                            return;
                         }
 
-                        for(String student : students) {
-                            if (student.compareTo(disName) == 0) {
-                                Toast.makeText(MainStudentActivity.this, "Already done!", Toast.LENGTH_LONG).show();
-                                screenUnlock();
-                                return;
-                            }
-                        }
-
-                        students.add(disName);
-                        reference.child("status").setValue(students).addOnCompleteListener(task -> {
+                        reference.child("status").child(disName).setValue(1).addOnCompleteListener(task -> {
                             if (task.isSuccessful()){
-                                String path = "students/" + disName + "/status/" + lesCode;
+                                String path = "students/" + disName + "/status/" + lesCode + "/" + week + "/" + date + "/" + time;
+
                                 final DatabaseReference refStudent = FirebaseDatabase.getInstance().getReference(path);
-                                refStudent.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        ArrayList<String> dates = new ArrayList<>();
-                                        for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                                            dates.add(ds.getValue(String.class));
-                                        }
 
-                                        for(String d : dates) {
-                                            if (d.compareTo(date) == 0) {
-                                                Toast.makeText(MainStudentActivity.this, "Already done!", Toast.LENGTH_LONG).show();
-                                                screenUnlock();
-                                                return;
-                                            }
-                                        }
-
-                                        dates.add(date);
-                                        refStudent.setValue(dates).addOnCompleteListener(task1 -> {
-                                            if (task1.isSuccessful()){
-                                                Toast.makeText(MainStudentActivity.this, "You were recorded in the poll", Toast.LENGTH_LONG).show();
-                                                screenUnlock();
-                                            }
-                                            else {
-                                                Toast.makeText(MainStudentActivity.this, task1.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                                screenUnlock();
-                                            }
-                                        });
+                                refStudent.setValue(1).addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()){
+                                        Toast.makeText(MainStudentActivity.this, "You were recorded in the poll", Toast.LENGTH_LONG).show();
+                                        screenUnlock();
                                     }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Toast.makeText(MainStudentActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                    else {
+                                        Toast.makeText(MainStudentActivity.this, task1.getException().getMessage(), Toast.LENGTH_LONG).show();
                                         screenUnlock();
                                     }
                                 });
