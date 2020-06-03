@@ -53,7 +53,7 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            _date = itemView.findViewById(R.id.lesson_code_text);
+            _date = itemView.findViewById(R.id.lesson_name_studentLesson);
 
             itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(_context, TeacherStatusActivity.class);

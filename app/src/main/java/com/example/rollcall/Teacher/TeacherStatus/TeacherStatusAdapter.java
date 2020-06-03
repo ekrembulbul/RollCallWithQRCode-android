@@ -47,7 +47,7 @@ public class TeacherStatusAdapter extends RecyclerView.Adapter<TeacherStatusAdap
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            _name = itemView.findViewById(R.id.lesson_code_text);
+            _name = itemView.findViewById(R.id.lesson_name_studentLesson);
 
             itemView.setOnClickListener(view -> {});
         }
