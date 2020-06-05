@@ -3,6 +3,9 @@ package com.example.rollcall.Teacher.TeacherDate;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 public class TeacherDateActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,38 +49,29 @@ public class TeacherDateActivity extends AppCompatActivity {
     private void init() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        String lesCode = intent.getStringExtra("lesCode");
+        String day = intent.getStringExtra("day");
+        setTitle(lesCode);
+
+        mProgressBar = findViewById(R.id.progress_bar_teacher_date);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         recyclerView = findViewById(R.id.recycleView_teacher_date);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TeacherDateActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-
-        setListeners();
+        adapter = new TeacherDateAdapter(TeacherDateActivity.this, lesCode, day);
+        recyclerView.setAdapter(adapter);
     }
 
-    private void setListeners() {
-        Intent intent = getIntent();
-        final String lesCode = intent.getStringExtra("lesCode");
+    public void screenLock() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
 
-        setTitle(lesCode);
-
-        String path = "lessons/" + lesCode + "/dates";
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> dates = new ArrayList<>();
-                for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                    dates.add(ds.getKey());
-                }
-
-                RecyclerView.Adapter adapter = new TeacherDateAdapter(TeacherDateActivity.this, dates, lesCode);
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(TeacherDateActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+    public void screenUnlock() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }
