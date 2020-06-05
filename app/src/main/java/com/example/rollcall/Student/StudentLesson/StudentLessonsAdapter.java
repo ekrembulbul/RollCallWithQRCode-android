@@ -69,6 +69,19 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
                 ((StudentLessonsActivity)_context).screenUnlock();
             }
         });
+        path = "lessons";
+        reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(_context, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @NonNull
@@ -133,7 +146,7 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
         public void setData(final String selected, int position) {
             String path = "lessons/" + selected;
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-            reference.addValueEventListener(new ValueEventListener() {
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     lessonCode.setText(selected);

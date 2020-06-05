@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.rollcall.LoginActivity;
@@ -31,6 +34,8 @@ import java.util.ArrayList;
 public class TeacherLessonsActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +81,15 @@ public class TeacherLessonsActivity extends AppCompatActivity {
     }
 
     private void init() {
+        mProgressBar = findViewById(R.id.progress_bar_teacher_lesson);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         recyclerView = findViewById(R.id.recyclerView_teacher);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TeacherLessonsActivity.this);
         recyclerView.setLayoutManager(layoutManager);
+        adapter = new TeacherLessonsAdapter(TeacherLessonsActivity.this);
+        recyclerView.setAdapter(adapter);
 
         setListeners();
     }
@@ -90,30 +100,15 @@ public class TeacherLessonsActivity extends AppCompatActivity {
             Intent intent = new Intent(TeacherLessonsActivity.this, AddLessonTeacherActivity.class);
             startActivity(intent);
         });
+    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Intent intent = new Intent(TeacherLessonsActivity.this, LoginActivity.class);
-            finish();
-            startActivity(intent);
-        }
-        String path = "teachers/" + user.getDisplayName() + "/registeredLesson";
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> regLessonList = new ArrayList<>();
-                for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                    regLessonList.add(ds.getValue(String.class));
-                }
+    public void screenLock() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
 
-                RecyclerView.Adapter adapter = new TeacherLessonsAdapter(TeacherLessonsActivity.this, regLessonList);
-                recyclerView.setAdapter(adapter);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(TeacherLessonsActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+    public void screenUnlock() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

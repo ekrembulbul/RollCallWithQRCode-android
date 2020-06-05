@@ -64,7 +64,7 @@ public class StudentStatusActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(StudentStatusActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new StudentStatusAdapter(StudentStatusActivity.this, lesCode, day);
+        adapter = new StudentStatusAdapter(StudentStatusActivity.this, lesCode, day);
         recyclerView.setAdapter(adapter);
     }
 

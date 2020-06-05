@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.rollcall.R;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 public class TeacherStatusActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,39 +49,30 @@ public class TeacherStatusActivity extends AppCompatActivity {
     private void init() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        final String lesCode = intent.getStringExtra("lesCode");
+        final String week = intent.getStringExtra("week");
+        final String date = intent.getStringExtra("date");
+        final String time = intent.getStringExtra("time");
+
+        mProgressBar = findViewById(R.id.progress_bar_teacher_status);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         recyclerView = findViewById(R.id.recycleView_teacher_status);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TeacherStatusActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-
-        setListeners();
+        adapter = new TeacherStatusAdapter(TeacherStatusActivity.this, lesCode, week, date, time);
+        recyclerView.setAdapter(adapter);
     }
 
-    private void setListeners() {
-        Intent intent = getIntent();
-        final String lesCode = intent.getStringExtra("lesCode");
-        final String date = intent.getStringExtra("date");
+    public void screenLock() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
 
-        setTitle(date);
-
-        String path = "lessons/" + lesCode + "/dates/" + date + "/status";
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> names = new ArrayList<>();
-                for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                    names.add(ds.getValue(String.class));
-                }
-
-                RecyclerView.Adapter adapter = new TeacherStatusAdapter(TeacherStatusActivity.this, names);
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(TeacherStatusActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+    public void screenUnlock() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

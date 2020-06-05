@@ -119,7 +119,7 @@ public class StudentStatusAdapter extends RecyclerView.Adapter<StudentStatusAdap
             }
             String path = "students/" + user.getDisplayName() + "/status/" + _lesCode + "/" + position;
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
-            reference.addValueEventListener(new ValueEventListener() {
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     dynamicLinearDate.removeAllViews();
@@ -131,7 +131,8 @@ public class StudentStatusAdapter extends RecyclerView.Adapter<StudentStatusAdap
                         dynamicLinearDate.addView(view);
                         TextView date = view.findViewById(R.id.lesson_date_studentLessonDates);
                         String dateS = ds.getKey();
-                        date.setText(printDateVer(dateS) + "\n" + daySplit[iDay]);
+                        //date.setText(printDateVer(dateS) + "\n" + daySplit[iDay]);
+                        date.setText(printDateVer(dateS));
 
                         LinearLayout dynamicLinearTime = view.findViewById(R.id.linearLayout_time);
                         dynamicLinearTime.removeAllViews();
