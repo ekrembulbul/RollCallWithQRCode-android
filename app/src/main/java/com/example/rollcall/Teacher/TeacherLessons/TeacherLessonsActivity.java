@@ -22,6 +22,7 @@ import com.example.rollcall.Student.MainStudentActivity;
 import com.example.rollcall.Student.RegisterStudentActivity;
 import com.example.rollcall.Teacher.AddLessonTeacherActivity;
 import com.example.rollcall.Teacher.TeacherValidateAdmin.TeacherValidateAdminActivity;
+import com.example.rollcall.TeacherLessonChartActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +46,7 @@ public class TeacherLessonsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_teacher);
         init();
+        //((TeacherLessonsAdapter) adapter)._registeredLessonList;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class TeacherLessonsActivity extends AppCompatActivity {
             inflater.inflate(R.menu.menu_teacher_lessons, menu);
         }
         else {
-            inflater.inflate(R.menu.menu, menu);
+            inflater.inflate(R.menu.menu_teacher_lesson_main, menu);
         }
         return true;
     }
@@ -68,6 +70,12 @@ public class TeacherLessonsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.chart:
+                Intent intentChart = new Intent(this, TeacherLessonChartActivity.class);
+                intentChart.putStringArrayListExtra("lesCodes", ((TeacherLessonsAdapter) adapter)._registeredLessonList);
+                intentChart.putStringArrayListExtra("attendance", ((TeacherLessonsAdapter) adapter).attendanceRate);
+                startActivity(intentChart);
+                return true;
             case R.id.validate_teahcer:
                 Intent intent = new Intent(this, TeacherValidateAdminActivity.class);
                 startActivity(intent);

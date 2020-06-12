@@ -25,6 +25,10 @@ android {
     }
 }
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -46,4 +50,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation project(path: ':openCVLibrary3410')
     implementation files('libs/jxl.jar')
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

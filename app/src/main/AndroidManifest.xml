@@ -16,6 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".TeacherLessonChartActivity"
+            android:label="Chart"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".Teacher.TeacherValidationInfoActivity"
             android:label="Info"
             android:screenOrientation="portrait" />
