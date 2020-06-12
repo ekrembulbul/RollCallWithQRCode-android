@@ -63,6 +63,23 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
         setListeners();
     }
 
+    private void getLessonName(ArrayList<ArrayList<String>> regLessonList) {
+        String path = "lessons";
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (int i = 0; i < regLessonList.size(); i++) {
+                    regLessonList.get(i).add(dataSnapshot.child(regLessonList.get(i).get(0)).child("name").getValue(String.class));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(RegisterLessonStudentActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void setListeners() {
         FloatingActionButton fab = findViewById(R.id.fab_student_register);
         fab.setOnClickListener(v -> finish());
@@ -81,6 +98,7 @@ public class RegisterLessonStudentActivity extends AppCompatActivity {
                         regLessonList.add(lessonTeacher);
                     }
                 }
+                getLessonName(regLessonList);
                 final ArrayList<ArrayList<String>> regLessonListTeacher = regLessonList;
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

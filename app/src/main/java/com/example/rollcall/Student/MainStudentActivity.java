@@ -1,6 +1,7 @@
 package com.example.rollcall.Student;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import com.example.rollcall.Camera.CameraActivity;
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
+import com.example.rollcall.Student.RegisterLessonStudent.RegisterLessonStudentActivity;
 import com.example.rollcall.Student.StudentLesson.StudentLessonsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +37,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainStudentActivity extends AppCompatActivity {
 
@@ -75,6 +79,63 @@ public class MainStudentActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar_student_main);
         mProgressBar.setVisibility(View.INVISIBLE);
         setListeners();
+        setNameAndId();
+        setDateAndTime();
+    }
+
+    private void setNameAndId() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            finish();
+            startActivity(intent);
+        }
+
+        TextView nameTW = findViewById(R.id.student_main_name);
+        TextView idTW = findViewById(R.id.student_main_id);
+
+        String path = "users/students";
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                    String id = ds.child("sId").getValue(String.class);
+                    if (id.compareTo(user.getDisplayName()) == 0) {
+                        idTW.setText(id);
+                        String name = ds.child("name").getValue(String.class);
+                        String surname = ds.child("surname").getValue(String.class);
+                        nameTW.setText(name + " " + surname);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(MainStudentActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void setDateAndTime() {
+        Calendar calendar = Calendar.getInstance();
+        TextView dateTW = findViewById(R.id.student_main_dateAndTime);
+
+        String dayName = "";
+        int dayNameI = calendar.get(Calendar.DAY_OF_WEEK);
+        if (dayNameI == 1) dayName = "Sunday";
+        else if (dayNameI == 2) dayName = "Monday";
+        else if (dayNameI == 3) dayName = "Tuesday";
+        else if (dayNameI == 4) dayName = "Wednesday";
+        else if (dayNameI == 5) dayName = "Thursday";
+        else if (dayNameI == 6) dayName = "Friday";
+        else if (dayNameI == 7) dayName = "Saturday";
+
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+
+        dateTW.setText(dayName + " " + day + "/" + month + "/" + year);
     }
 
     private void setListeners() {

@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
+import com.example.rollcall.Student.MainStudentActivity;
 import com.example.rollcall.Student.RegisterStudentActivity;
 import com.example.rollcall.Teacher.AddLessonTeacherActivity;
 import com.example.rollcall.Teacher.TeacherValidateAdmin.TeacherValidateAdminActivity;
@@ -30,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class TeacherLessonsActivity extends AppCompatActivity {
 
@@ -92,6 +95,41 @@ public class TeacherLessonsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         setListeners();
+        setNameAndId();
+        setDateAndTime();
+    }
+
+    private void setNameAndId() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            finish();
+            startActivity(intent);
+        }
+
+        TextView nameTW = findViewById(R.id.teacher_main_name);
+        nameTW.setText(user.getDisplayName());
+    }
+
+    private void setDateAndTime() {
+        Calendar calendar = Calendar.getInstance();
+        TextView dateTW = findViewById(R.id.teacher_main_dateAndTime);
+
+        String dayName = "";
+        int dayNameI = calendar.get(Calendar.DAY_OF_WEEK);
+        if (dayNameI == 1) dayName = "Sunday";
+        else if (dayNameI == 2) dayName = "Monday";
+        else if (dayNameI == 3) dayName = "Tuesday";
+        else if (dayNameI == 4) dayName = "Wednesday";
+        else if (dayNameI == 5) dayName = "Thursday";
+        else if (dayNameI == 6) dayName = "Friday";
+        else if (dayNameI == 7) dayName = "Saturday";
+
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+
+        dateTW.setText(dayName + " " + day + "/" + month + "/" + year);
     }
 
     private void setListeners() {

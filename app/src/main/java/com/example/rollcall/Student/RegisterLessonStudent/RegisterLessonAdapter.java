@@ -61,12 +61,14 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
+        TextView _lessonName;
         TextView _lessonCode;
         TextView _teacherName;
         CheckBox _checkBox;
 
         public MyViewHolder(View itemView) {
             super(itemView);
+            _lessonName = itemView.findViewById(R.id.lesson_name_text_register);
             _lessonCode = itemView.findViewById(R.id.lesson_code_text_register);
             _teacherName = itemView.findViewById(R.id.lesson_code_text_register2);
             _checkBox = itemView.findViewById(R.id.checkBox_register);
@@ -85,6 +87,7 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
         }
 
         public void setData(final ArrayList<String> selected) {
+            this._lessonName.setText(selected.get(2));
             this._lessonCode.setText(selected.get(0));
             this._teacherName.setText(selected.get(1));
 
