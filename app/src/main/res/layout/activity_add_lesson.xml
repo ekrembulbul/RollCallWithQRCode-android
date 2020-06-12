@@ -57,7 +57,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/textView3"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/lineerLayout_include"
-                app:layout_constraintTop_toBottomOf="@+id/imageButton_attach" />
+                app:layout_constraintTop_toBottomOf="@+id/fab_attach" />
 
             <EditText
                 android:id="@+id/lesson_name_input"
@@ -152,23 +152,15 @@
                 app:layout_constraintEnd_toEndOf="@+id/lesson_name_input"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-            <ImageButton
-                android:id="@+id/imageButton_attach"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@+id/textView7"
-                app:layout_constraintTop_toBottomOf="@+id/textView7"
-                app:srcCompat="@drawable/ic_attach_file_white_24dp" />
-
             <TextView
                 android:id="@+id/attach_file_textview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageButton_attach"
+                app:layout_constraintBottom_toBottomOf="@+id/fab_attach"
                 app:layout_constraintEnd_toEndOf="@+id/textView3"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_attach"
-                app:layout_constraintTop_toTopOf="@+id/imageButton_attach" />
+                app:layout_constraintStart_toEndOf="@+id/fab_attach"
+                app:layout_constraintTop_toTopOf="@+id/fab_attach" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -181,6 +173,16 @@
                 app:layout_constraintEnd_toEndOf="@+id/textView3"
                 app:layout_constraintStart_toStartOf="@+id/lineerLayout_include"
                 app:layout_constraintTop_toBottomOf="@+id/lineerLayout_include" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_attach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:layout_constraintStart_toStartOf="@+id/textView7"
+                app:layout_constraintTop_toBottomOf="@+id/textView7"
+                app:srcCompat="@drawable/ic_attach_file_white_24dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

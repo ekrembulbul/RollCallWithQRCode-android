@@ -98,8 +98,9 @@
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/launcher"
-        tools:layout_editor_absoluteX="141dp" />
+        app:srcCompat="@mipmap/launcher" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

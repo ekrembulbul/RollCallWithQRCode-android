@@ -45,11 +45,16 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 public class AddLessonTeacherActivity extends AppCompatActivity {
 
@@ -65,6 +70,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
     ArrayList<ArrayList<String>> daysAndTimes;
     InputStream inputStream;
     TextView attachFile;
+    ArrayList<String> studentIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +95,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         attachFile = findViewById(R.id.attach_file_textview);
+        studentIds = new ArrayList<>();
 
         numberOfLessonDay = findViewById(R.id.spinner_number_of_lesson_day);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.number_of_lesson_array, android.R.layout.simple_spinner_item);
@@ -119,13 +126,29 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             addLesson();
         });
 
-        ImageButton attach = findViewById(R.id.imageButton_attach);
+        FloatingActionButton attach = findViewById(R.id.fab_attach);
         attach.setOnClickListener(v -> {
             browseDocuments();
         });
     }
 
+    private void readExcel() {
+        try {
+            Workbook workbook = Workbook.getWorkbook(inputStream);
+            Sheet sheet = workbook.getSheet(0);
 
+            studentIds.clear();
+            for (int i = 8; i < sheet.getRows(); i++) {
+                studentIds.add(sheet.getCell(2, i).getContents());
+            }
+        }
+        catch (BiffException e) {
+            Log.d("excelTest", e.getMessage());
+        }
+        catch (IOException e) {
+            Log.d("excelTest", e.getMessage());
+        }
+    }
 
     private void browseDocuments(){
         String[] mimeTypes =
@@ -164,6 +187,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
                         inputStream = getContentResolver().openInputStream(uri);
                         Log.d("excelTest", getFileName(uri));
                         attachFile.setText(getFileName(uri));
+                        readExcel();
                     }
                     catch (FileNotFoundException e) {
                         Log.d("ecxelTest", e.getMessage());
@@ -350,6 +374,16 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
         String path = "lessons/" + lessonCode.getText().toString() + "/teacher";
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
         reference.setValue(user.getDisplayName()).addOnCompleteListener(task -> {
+            if (!task.isSuccessful()){
+                Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                screenUnlock();
+                return;
+            }
+        });
+
+        path = "lessons/" + lessonCode.getText().toString() + "/allStudents";
+        reference = FirebaseDatabase.getInstance().getReference(path);
+        reference.setValue(studentIds).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
                 Toast.makeText(AddLessonTeacherActivity.this, "Lesson could not be added\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 screenUnlock();

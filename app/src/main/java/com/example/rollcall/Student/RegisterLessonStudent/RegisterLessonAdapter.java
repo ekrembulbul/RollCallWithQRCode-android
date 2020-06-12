@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,7 +109,43 @@ public class RegisterLessonAdapter extends RecyclerView.Adapter<RegisterLessonAd
 
         public void registerLesson() {
             ((RegisterLessonStudentActivity)_context).screenLock();
-            updateLessonStatus();
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Intent intent = new Intent(_context, LoginActivity.class);
+                ((Activity) _context).finish();
+                _context.startActivity(intent);
+            }
+
+            String path = "lessons/" + _lessonCode.getText().toString() + "/allStudents";
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    boolean flag;
+                    flag = false;
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        Log.d("registerTest", ds.getValue(String.class) + " - " + user.getDisplayName());
+                        if (ds.getValue(String.class).compareTo(user.getDisplayName()) == 0) {
+                            flag = true;
+                        }
+                    }
+
+                    if (flag) {
+                        updateLessonStatus();
+                    }
+                    else {
+                        Toast.makeText(_context, "You are not registered for this course on USIS!", Toast.LENGTH_LONG).show();
+                        ((RegisterLessonStudentActivity)_context).screenUnlock();
+                        _checkBox.setChecked(false);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(_context, "Could not be register to lesson\n" + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    ((RegisterLessonStudentActivity)_context).screenUnlock();
+                }
+            });
         }
 
         private void updateLessonStatus() {
