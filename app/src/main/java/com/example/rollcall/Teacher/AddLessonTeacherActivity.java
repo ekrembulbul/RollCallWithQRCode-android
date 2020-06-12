@@ -6,7 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.FileUtils;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -36,12 +42,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class AddLessonTeacherActivity extends AppCompatActivity {
+
+    private final static int REQUEST_CODE_DOC = 45;
 
     ProgressBar mProgressBar;
     LinearLayout dynamicContent;
@@ -51,6 +63,8 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
     ArrayList<ArrayList<String>> dateList;
     EditText lessonNumberOfWeek;
     ArrayList<ArrayList<String>> daysAndTimes;
+    InputStream inputStream;
+    TextView attachFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +87,8 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
 
     private void init() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        attachFile = findViewById(R.id.attach_file_textview);
 
         numberOfLessonDay = findViewById(R.id.spinner_number_of_lesson_day);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.number_of_lesson_array, android.R.layout.simple_spinner_item);
@@ -102,6 +118,82 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             calculateDates();
             addLesson();
         });
+
+        ImageButton attach = findViewById(R.id.imageButton_attach);
+        attach.setOnClickListener(v -> {
+            browseDocuments();
+        });
+    }
+
+
+
+    private void browseDocuments(){
+        String[] mimeTypes =
+                {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                        "application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                        "application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+                        "text/plain",
+                        "application/pdf",
+                        "application/zip"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+            if (mimeTypes.length > 0) {
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            }
+        } else {
+            String mimeTypesStr = "";
+            for (String mimeType : mimeTypes) {
+                mimeTypesStr += mimeType + "|";
+            }
+            intent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
+        }
+        startActivityForResult(Intent.createChooser(intent,"ChooseFile"), REQUEST_CODE_DOC);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_DOC:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Uri uri = data.getData();
+                        inputStream = getContentResolver().openInputStream(uri);
+                        Log.d("excelTest", getFileName(uri));
+                        attachFile.setText(getFileName(uri));
+                    }
+                    catch (FileNotFoundException e) {
+                        Log.d("ecxelTest", e.getMessage());
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     private void generateView(int count) {
