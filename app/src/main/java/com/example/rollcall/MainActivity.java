@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
     private FirebaseAuth mAuth;
-    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         mAuth = FirebaseAuth.getInstance();
-        mProgressBar = findViewById(R.id.progress_bar_main);
     }
 
     private void readDataTeachers() {
