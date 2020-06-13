@@ -37,6 +37,10 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
     private LayoutInflater inflater;
     private String _lesCode;
     private String _day;
+    private int timeNumberOneWeek = 0;
+
+    public ArrayList<String> xAxisLabels;
+    public ArrayList<String> attendanceChart;
 
     public TeacherDateAdapter(Context context, String lesCode, String day) {
         inflater = LayoutInflater.from(context);
@@ -55,11 +59,25 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> week = new ArrayList<>();
+                attendanceChart = new ArrayList<>();
+                xAxisLabels = new ArrayList<>();
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     week.add("Week " + (Integer.parseInt(ds.getKey()) + 1));
+
+                    int counter;
+                    counter = 0;
+                    for (DataSnapshot dsC: ds.getChildren()) {
+                        for (DataSnapshot dsCC: dsC.getChildren()) {
+                            xAxisLabels.add("null");
+                            attendanceChart.add("-");
+                            counter++;
+                        }
+                    }
+                    if (timeNumberOneWeek == 0) timeNumberOneWeek = counter;
                 }
 
                 _weeks = week;
+
                 notifyDataSetChanged();
                 ((TeacherDateActivity)_context).screenUnlock();
             }
@@ -113,6 +131,8 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
                     dynamicLinearDate.removeAllViews();
                     String[] daySplit = _day.split("\n");
                     int iDay = 0;
+                    int counter;
+                    counter = 0;
 
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
                         View view = ((Activity)_context).getLayoutInflater().inflate(R.layout.teacher_lesson_status_date_item, dynamicLinearDate, false);
@@ -155,7 +175,11 @@ public class TeacherDateAdapter extends RecyclerView.Adapter<TeacherDateAdapter.
                             }
                             else {
                                 timeAttendance.setText(result[0] + "/" + result[1]);
+                                xAxisLabels.set(timeNumberOneWeek * position + counter, week.getText().toString() + "_" + date.getText().toString() + "_" + time.getText().toString());
+                                attendanceChart.set(timeNumberOneWeek * position + counter, timeAttendance.getText().toString());
                             }
+
+                            counter++;
                         }
                         iDay++;
                     }

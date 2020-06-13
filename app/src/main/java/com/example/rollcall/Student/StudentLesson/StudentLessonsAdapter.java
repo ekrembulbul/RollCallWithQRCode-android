@@ -30,7 +30,8 @@ import java.util.ArrayList;
 public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAdapter.MyViewHolder> {
 
     private Context _context;
-    private ArrayList<String> _registeredLessonList;
+    public ArrayList<String> _registeredLessonList;
+    public ArrayList<String> attendanceRate;
     private LayoutInflater inflater;
 
     public StudentLessonsAdapter(Context context) {
@@ -60,6 +61,11 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
 
                 _registeredLessonList = regLessonList;
                 notifyDataSetChanged();
+                attendanceRate = new ArrayList<>(_registeredLessonList.size());
+                for (int i = 0; i < _registeredLessonList.size(); i++) {
+                    attendanceRate.add("0/0");
+                }
+
                 ((StudentLessonsActivity)_context).screenUnlock();
             }
 
@@ -203,6 +209,7 @@ public class StudentLessonsAdapter extends RecyclerView.Adapter<StudentLessonsAd
                     String[] reta = getAttendanceRate(dataSnapshot);
                     int aRate = (int) ((Float.parseFloat(reta[0]) / Float.parseFloat(reta[1])) * 100);
                     lessonAttendanceRateResult.setText(reta[0] + "/" + reta[1] + "    " + "%" + aRate);
+                    attendanceRate.set(position, reta[0] + "/" + reta[1]);
 
                     float globalARate = Float.parseFloat(ret[1]) * 3 / 10;
 

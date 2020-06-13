@@ -1,4 +1,4 @@
-package com.example.rollcall;
+package com.example.rollcall.Teacher;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.rollcall.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -47,6 +48,8 @@ public class TeacherLessonChartActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setLabelRotationAngle(-45);
         xAxis.setLabelCount(lesCodes.size());
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(lesCodes));
 
         BarDataSet dataSet = new BarDataSet(entries, "Attendance");

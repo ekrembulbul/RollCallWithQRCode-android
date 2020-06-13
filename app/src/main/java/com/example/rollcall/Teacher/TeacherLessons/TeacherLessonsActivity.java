@@ -14,25 +14,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
-import com.example.rollcall.Student.MainStudentActivity;
-import com.example.rollcall.Student.RegisterStudentActivity;
 import com.example.rollcall.Teacher.AddLessonTeacherActivity;
 import com.example.rollcall.Teacher.TeacherValidateAdmin.TeacherValidateAdminActivity;
-import com.example.rollcall.TeacherLessonChartActivity;
+import com.example.rollcall.Teacher.TeacherLessonChartActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class TeacherLessonsActivity extends AppCompatActivity {

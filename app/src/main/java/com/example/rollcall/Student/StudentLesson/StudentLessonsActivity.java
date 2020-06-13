@@ -2,6 +2,8 @@ package com.example.rollcall.Student.StudentLesson;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,9 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rollcall.LoginActivity;
 import com.example.rollcall.R;
 import com.example.rollcall.Student.RegisterLessonStudent.RegisterLessonStudentActivity;
+import com.example.rollcall.Student.StudentLessonChartActivity;
+import com.example.rollcall.Teacher.TeacherLessonChartActivity;
+import com.example.rollcall.Teacher.TeacherLessons.TeacherLessonsAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class StudentLessonsActivity extends AppCompatActivity {
 
@@ -30,8 +38,21 @@ public class StudentLessonsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_student_lesson_main, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.chart:
+                Intent intentChart = new Intent(this, StudentLessonChartActivity.class);
+                intentChart.putStringArrayListExtra("lesCodes", ((StudentLessonsAdapter) adapter)._registeredLessonList);
+                intentChart.putStringArrayListExtra("attendance", ((StudentLessonsAdapter) adapter).attendanceRate);
+                startActivity(intentChart);
+                return true;
             case android.R.id.home:
                 finish();
                 return true;
