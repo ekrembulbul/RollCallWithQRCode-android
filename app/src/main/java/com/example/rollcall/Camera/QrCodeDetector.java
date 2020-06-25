@@ -18,7 +18,9 @@ public class QrCodeDetector {
 
     private final static String TAG = "QrCodeDetector";
 
-    public void detect(Bitmap bitmap) {
+    public Bitmap detect(Bitmap bitmap) {
+        
 
+        return bitmap;
     }
 }

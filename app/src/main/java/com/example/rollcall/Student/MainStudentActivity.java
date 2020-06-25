@@ -146,15 +146,15 @@ public class MainStudentActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(MainStudentActivity.this, new String[] { Manifest.permission.CAMERA }, CAMERA_REQUEST_CODE);
             }
             else {
-                /*
                 Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
                 startActivity(intentList);
-                */
 
+                /*
                 IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
                 integrator.setOrientationLocked(false);
                 integrator.initiateScan();
+                */
             }
         });
     }
@@ -164,15 +164,15 @@ public class MainStudentActivity extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    /*
                     Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
                     startActivity(intentList);
-                    */
 
+                    /*
                     IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
                     integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
                     integrator.setOrientationLocked(false);
                     integrator.initiateScan();
+                    */
                 }
                 return;
             }

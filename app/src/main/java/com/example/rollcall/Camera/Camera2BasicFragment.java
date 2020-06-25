@@ -45,6 +45,7 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -63,10 +64,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2BasicFragment extends Fragment implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+
+    QrCodeDetector qrCodeDetector;
+    Timer timer;
+    ImageView imageViewDebug;
+
+    class MyTimer extends TimerTask {
+        public void run() {
+            Bitmap bitmap = mTextureView.getBitmap();
+            Bitmap result = qrCodeDetector.detect(bitmap);
+
+            getActivity().runOnUiThread(() -> imageViewDebug.setImageBitmap(result));
+        }
+    }
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -128,12 +144,13 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
      */
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
-        QrCodeDetector qrCodeDetector;
-
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
             openCamera(width, height);
+            imageViewDebug = getActivity().findViewById(R.id.imageView_camera_debug);
             qrCodeDetector = new QrCodeDetector();
+            timer = new Timer();
+            timer.schedule(new MyTimer(), 0, 1000);
         }
 
         @Override
@@ -148,8 +165,6 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-            Bitmap bitmap = mTextureView.getBitmap();
-            qrCodeDetector.detect(bitmap);
         }
 
     };
