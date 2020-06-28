@@ -87,14 +87,12 @@ public class QrCodeDetector {
                 finderRects.add(rects.get(i));
             }
         }
-        Log.d(TAG, String.valueOf(finderRects.size()));
         if (finderRects.size() != 18) {
             return matToBitmap(rgb);
         }
 
         List<Double> sizes = new ArrayList<>();
         for (RotatedRect rect: finderRects) {
-//            Imgproc.circle(rgb, new Point(rect.center.x - rect.size.width / 2, rect.center.y - rect.size.height / 2), 10, new Scalar(255, 0, 0));
             sizes.add(rect.size.width);
         }
 
@@ -154,9 +152,215 @@ public class QrCodeDetector {
         Point rightBottomPoint = new Point(rightTopPoint.x + (leftBottomPoint.x - leftTopPoint.x), leftBottomPoint.y + (rightTopPoint.y - leftTopPoint.y));
         Imgproc.circle(rgb, rightBottomPoint, 10, new Scalar(255, 0, 0), 10);
 
-        Rect mainRect = new Rect(leftTopPoint, rightBottomPoint);
+        Rect mainRect = new Rect((int) leftTopPoint.x, (int) leftTopPoint.y, (int) (rightTopPoint.x - leftTopPoint.x), (int) (leftBottomPoint.y - leftTopPoint.y));
 
+        Imgproc.circle(rgb, mainRect.tl(), 10, new Scalar(0, 0, 255), 10);
+        Imgproc.circle(rgb, mainRect.br(), 10, new Scalar(0, 0, 255), 10);
         Imgproc.rectangle(rgb, mainRect.tl(), mainRect.br(), new Scalar(0, 255, 0), 2);
+
+        Rect[][] byteRectMat = new Rect[25][25];
+
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 25; j++) {
+                double byteSizeWidth = mainRect.width / 25.0;
+                double byteSizeHeight = mainRect.height / 25.0;
+                int x = (int) (mainRect.x + j * byteSizeWidth);
+                int y = (int) (mainRect.y + i * byteSizeHeight);
+                Rect byteRect = new Rect(x, y, (int) byteSizeWidth, (int) byteSizeHeight);
+                byteRectMat[i][j] = byteRect;
+                Imgproc.rectangle(rgb, byteRect.tl(), byteRect.br(), new Scalar(255, 0, 255), 2);
+            }
+        }
+
+        double[][] data = new double[25][25];
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 25; j++) {
+                Point center = new Point(byteRectMat[i][j].x + byteRectMat[i][j].width / 2, byteRectMat[i][j].y + byteRectMat[i][j].height / 2);
+                double[] dataMat = gray.get((int) center.y, (int) center.x);
+                data[i][j] = dataMat[0];
+            }
+        }
+
+//        Log.d(TAG, "data: " + data[2][0] + " " + data[2][1] + " " + data[2][2] + " " + data[2][3] + " " + data[2][4] + " " + data[2][5] + " " + data[2][6]);
+
+        int[][] bitData = new int[25][25];
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 25; j++) {
+                if (data[i][j] < 128) bitData[i][j] = 1;
+                else bitData[i][j] = 0;
+            }
+        }
+
+        for (int i = 0; i < 25; i++) {
+            String str = i + ": ";
+            for (int j = 0; j < 25; j++) {
+                str += bitData[i][j] + " ";
+            }
+            //Log.d(TAG, str);
+        }
+
+        String codeStr = "";
+
+        int i = 0, k = 24;
+        while (i < 16) {
+            codeStr += String.valueOf(bitData[k][24]);
+            codeStr += String.valueOf(bitData[k][23]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 16) {
+            codeStr += String.valueOf(bitData[k][22]);
+            codeStr += String.valueOf(bitData[k][21]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 24;
+        while (i < 4) {
+            codeStr += String.valueOf(bitData[k][20]);
+            codeStr += String.valueOf(bitData[k][19]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 15;
+        while (i < 7) {
+            codeStr += String.valueOf(bitData[k][20]);
+            codeStr += String.valueOf(bitData[k][19]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 7) {
+            codeStr += String.valueOf(bitData[k][18]);
+            codeStr += String.valueOf(bitData[k][17]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 21;
+        while (i < 4) {
+            codeStr += String.valueOf(bitData[k][18]);
+            codeStr += String.valueOf(bitData[k][17]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 24;
+        while (i < 4) {
+            codeStr += String.valueOf(bitData[k][16]);
+            codeStr += String.valueOf(bitData[k][15]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 20;
+        while (i < 5) {
+            codeStr += String.valueOf(bitData[k][15]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 15;
+        while (i < 9) {
+            codeStr += String.valueOf(bitData[k][16]);
+            codeStr += String.valueOf(bitData[k][15]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 5;
+        while (i < 6) {
+            codeStr += String.valueOf(bitData[k][16]);
+            codeStr += String.valueOf(bitData[k][15]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 0;
+        while (i < 6) {
+            codeStr += String.valueOf(bitData[k][14]);
+            codeStr += String.valueOf(bitData[k][13]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 7;
+        while (i < 18) {
+            codeStr += String.valueOf(bitData[k][14]);
+            codeStr += String.valueOf(bitData[k][13]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 24;
+        while (i < 18) {
+            codeStr += String.valueOf(bitData[k][12]);
+            codeStr += String.valueOf(bitData[k][11]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 5;
+        while (i < 6) {
+            codeStr += String.valueOf(bitData[k][12]);
+            codeStr += String.valueOf(bitData[k][11]);
+            ++i;
+            --k;
+        }
+        i = 0;
+        k = 0;
+        while (i < 6) {
+            codeStr += String.valueOf(bitData[k][10]);
+            codeStr += String.valueOf(bitData[k][9]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 7;
+        while (i < 18) {
+            codeStr += String.valueOf(bitData[k][10]);
+            codeStr += String.valueOf(bitData[k][9]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 8) {
+            codeStr += String.valueOf(bitData[k][8]);
+            codeStr += String.valueOf(bitData[k][7]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 8) {
+            codeStr += String.valueOf(bitData[k][5]);
+            codeStr += String.valueOf(bitData[k][4]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 8) {
+            codeStr += String.valueOf(bitData[k][3]);
+            codeStr += String.valueOf(bitData[k][2]);
+            ++i;
+            ++k;
+        }
+        i = 0;
+        k = 9;
+        while (i < 8) {
+            codeStr += String.valueOf(bitData[k][1]);
+            codeStr += String.valueOf(bitData[k][0]);
+            ++i;
+            ++k;
+        }
+
+        Log.d(TAG, codeStr);
 
         return matToBitmap(rgb);
     }
