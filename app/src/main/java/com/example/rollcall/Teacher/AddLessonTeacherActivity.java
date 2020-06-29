@@ -371,7 +371,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             finish();
             startActivity(intent);
         }
-        String path = "lessons/" + lessonCode.getText().toString() + "/teacher";
+        String path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/teacher";
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(path);
         reference.setValue(user.getDisplayName()).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
@@ -381,7 +381,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         });
 
-        path = "lessons/" + lessonCode.getText().toString() + "/allStudents";
+        path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/allStudents";
         reference = FirebaseDatabase.getInstance().getReference(path);
         reference.setValue(studentIds).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
@@ -391,7 +391,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         });
 
-        path = "lessons/" + lessonCode.getText().toString() + "/name";
+        path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/name";
         reference = FirebaseDatabase.getInstance().getReference(path);
         reference.setValue(lessonName.getText().toString()).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
@@ -401,7 +401,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         });
 
-        path = "lessons/" + lessonCode.getText().toString() + "/numberOfWeek";
+        path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/numberOfWeek";
         reference = FirebaseDatabase.getInstance().getReference(path);
         reference.setValue(lessonNumberOfWeek.getText().toString()).addOnCompleteListener(task -> {
             if (!task.isSuccessful()){
@@ -411,7 +411,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         });
 
-        path = "lessons/" + lessonCode.getText().toString() + "/dates";
+        path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/dates";
         reference = FirebaseDatabase.getInstance().getReference(path);
         for (int i = 0; i < dateList.size(); i++) {
             for (int j = 0; j < daysAndTimes.size(); j++) {
@@ -439,7 +439,7 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
             }
         }
 
-        path = "lessons/" + lessonCode.getText().toString() + "/dayAndTime";
+        path = "lessons/" + lessonCode.getText().toString().toUpperCase() + "/dayAndTime";
         reference = FirebaseDatabase.getInstance().getReference(path);
         for (int i = 0; i < daysAndTimes.size(); i++) {
             reference.child(String.valueOf(i)).child("day").setValue(daysAndTimes.get(i).get(0)).addOnCompleteListener(task -> {
@@ -476,14 +476,14 @@ public class AddLessonTeacherActivity extends AppCompatActivity {
                 }
 
                 for(String lesson : alRegisteredLessons) {
-                    if (lesson.compareTo(lessonCode.getText().toString()) == 0) {
+                    if (lesson.compareTo(lessonCode.getText().toString().toUpperCase()) == 0) {
                         Toast.makeText(AddLessonTeacherActivity.this, "Lesson already exist!", Toast.LENGTH_SHORT).show();
                         screenUnlock();
                         return;
                     }
                 }
 
-                alRegisteredLessons.add(lessonCode.getText().toString());
+                alRegisteredLessons.add(lessonCode.getText().toString().toUpperCase());
                 regLessonRef.setValue(alRegisteredLessons).addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         Toast.makeText(AddLessonTeacherActivity.this, "Lesson added", Toast.LENGTH_SHORT).show();

@@ -3,10 +3,12 @@ package com.example.rollcall.Camera;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.google.zxing.common.reedsolomon.GenericGF;
+import com.google.zxing.common.reedsolomon.ReedSolomonDecoder;
+import com.google.zxing.common.reedsolomon.ReedSolomonException;
+
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvException;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -15,20 +17,17 @@ import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.core.TermCriteria;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class QrCodeDetector {
 
     private final static String TAG = "QrCodeDetector";
 
-    public Bitmap detect(Bitmap bmp) {
+    public String detect(Bitmap bmp) {
         Mat mat = bitmapToMat(bmp);
 
         Mat gray = new Mat();
@@ -88,7 +87,7 @@ public class QrCodeDetector {
             }
         }
         if (finderRects.size() != 18) {
-            return matToBitmap(rgb);
+            return null;
         }
 
         List<Double> sizes = new ArrayList<>();
@@ -362,7 +361,150 @@ public class QrCodeDetector {
 
         Log.d(TAG, codeStr);
 
-        return matToBitmap(rgb);
+        codeStr = codeStr.substring(0, codeStr.length() - 7);
+        Log.d(TAG, codeStr);
+
+        int[] codeArray = new int[44];
+        for (i = 0; i < 44; i++) {
+            String byteStr = codeStr.substring(i * 8, (i + 1) * 8);
+            codeArray[i] = (Integer.parseInt(byteStr, 2));
+        }
+
+        String printStr = "";
+        for (i = 0; i < 44; i++) {
+            printStr += codeArray[i] + " ";
+        }
+        Log.d(TAG, printStr);
+
+        GenericGF field = GenericGF.AZTEC_DATA_8;
+        ReedSolomonDecoder decoder = new ReedSolomonDecoder(field);
+        try {
+            decoder.decode(codeArray, 22);
+        }
+        catch (ReedSolomonException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        printStr = "";
+        for (i = 0; i < 44; i++) {
+            printStr += codeArray[i] + " ";
+        }
+        Log.d(TAG, printStr);
+
+        int dataSize = 22;
+        int index = 21;
+        while (codeArray[index] == 17 || codeArray[index] == 236) {
+            dataSize--;
+            index--;
+        }
+
+        codeStr = "";
+        for (i = 0; i < dataSize; i++) {
+            String str = Integer.toBinaryString(codeArray[i]);
+            String zeros = "";
+            for (int j = 0; j < 8 - str.length(); j++) {
+                zeros += "0";
+            }
+            codeStr += zeros + str;
+        }
+        Log.d(TAG, codeStr);
+
+        codeStr = codeStr.substring(4);
+        String charCountStr = codeStr.substring(0, 9);
+        int charCount = Integer.parseInt(charCountStr, 2);
+
+        Log.d(TAG, String.valueOf(charCount));
+
+        codeStr = codeStr.substring(9);
+        Log.d(TAG, codeStr);
+
+        List<String> codeStrList = new ArrayList<>();
+        if (charCount % 2 == 0) {
+            for (i = 0; i < charCount / 2; i++) {
+                codeStrList.add(codeStr.substring(i * 11, (i + 1) * 11));
+            }
+        }
+        else if (charCount % 2 == 1) {
+            for (i = 0; i < charCount / 2; i++) {
+                codeStrList.add(codeStr.substring(i * 11, (i + 1) * 11));
+            }
+            codeStrList.add(codeStr.substring((charCount / 2) * 11, (charCount / 2) * 11 + 6));
+        }
+        Log.d(TAG, codeStrList.toString());
+
+        String qrCodeStr = getQrCodeStr(codeStrList);
+        Log.d(TAG, qrCodeStr);
+
+        Log.d(TAG, " ");
+        return qrCodeStr;
+    }
+
+    private String getChar(int code) {
+        if (code == 0) return "0";
+        else if (code == 1) return "1";
+        else if (code == 2) return "2";
+        else if (code == 3) return "3";
+        else if (code == 4) return "4";
+        else if (code == 5) return "5";
+        else if (code == 6) return "6";
+        else if (code == 7) return "7";
+        else if (code == 8) return "8";
+        else if (code == 9) return "9";
+        else if (code == 10) return "A";
+        else if (code == 11) return "B";
+        else if (code == 12) return "C";
+        else if (code == 13) return "D";
+        else if (code == 14) return "E";
+        else if (code == 15) return "F";
+        else if (code == 16) return "G";
+        else if (code == 17) return "H";
+        else if (code == 18) return "I";
+        else if (code == 19) return "J";
+        else if (code == 20) return "K";
+        else if (code == 21) return "L";
+        else if (code == 22) return "M";
+        else if (code == 23) return "N";
+        else if (code == 24) return "O";
+        else if (code == 25) return "P";
+        else if (code == 26) return "Q";
+        else if (code == 27) return "R";
+        else if (code == 28) return "S";
+        else if (code == 29) return "T";
+        else if (code == 30) return "U";
+        else if (code == 31) return "V";
+        else if (code == 32) return "W";
+        else if (code == 33) return "X";
+        else if (code == 34) return "Y";
+        else if (code == 35) return "Z";
+        else if (code == 36) return " ";
+        else if (code == 37) return "$";
+        else if (code == 38) return "%";
+        else if (code == 39) return "*";
+        else if (code == 40) return "+";
+        else if (code == 41) return "-";
+        else if (code == 42) return ".";
+        else if (code == 43) return "/";
+        else if (code == 44) return ":";
+        return "";
+    }
+
+    private String getQrCodeStr(List<String> codeStrList) {
+        String qrCodeStr = "";
+        for (String str: codeStrList) {
+            if (str.length() == 11) {
+                int code = Integer.parseInt(str, 2);
+                int first = code / 45;
+                int second = code % 45;
+                qrCodeStr += getChar(first);
+                qrCodeStr += getChar(second);
+            }
+            else {
+                int code = Integer.parseInt(str, 2);
+                qrCodeStr += getChar(code);
+            }
+        }
+        return qrCodeStr;
     }
 
     private Mat bitmapToMat(Bitmap bmp) {

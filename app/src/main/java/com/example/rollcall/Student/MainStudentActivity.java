@@ -42,6 +42,7 @@ import java.util.Calendar;
 public class MainStudentActivity extends AppCompatActivity {
 
     private final static int CAMERA_REQUEST_CODE = 1;
+    private final static int QR_CODE_REQUEST_CODE = 1;
     ProgressBar mProgressBar;
 
     @Override
@@ -164,8 +165,8 @@ public class MainStudentActivity extends AppCompatActivity {
         switch (requestCode) {
             case CAMERA_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intentList = new Intent(MainStudentActivity.this, CameraActivity.class);
-                    startActivity(intentList);
+                    Intent intent = new Intent(MainStudentActivity.this, CameraActivity.class);
+                    startActivityForResult(intent, QR_CODE_REQUEST_CODE);
 
                     /*
                     IntentIntegrator integrator = new IntentIntegrator(MainStudentActivity.this);
@@ -179,8 +180,10 @@ public class MainStudentActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
@@ -193,13 +196,22 @@ public class MainStudentActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+        */
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == QR_CODE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result= data.getStringExtra("result");
+                updateDatabase(result);
+            }
+        }
     }
 
     private void updateDatabase(String result) {
         //Log.d("MainStudentActivity", result);
         //Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         String[] res = result.split(" ");
-        if (!res[0].equals("$rc$")){
+        if (!res[0].equals("$RC$")){
             Toast.makeText(this, "QR Code is invalid!", Toast.LENGTH_LONG).show();
             return;
         }

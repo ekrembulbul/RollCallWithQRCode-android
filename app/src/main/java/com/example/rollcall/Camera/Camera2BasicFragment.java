@@ -1,6 +1,7 @@
 package com.example.rollcall.Camera;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -73,14 +74,22 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
 
     QrCodeDetector qrCodeDetector;
     Timer timer;
-    ImageView imageViewDebug;
 
     class MyTimer extends TimerTask {
         public void run() {
             Bitmap bitmap = mTextureView.getBitmap();
-            Bitmap result = qrCodeDetector.detect(bitmap);
+            String result = qrCodeDetector.detect(bitmap);
+            if (result != null) {
+                Intent intent = new Intent();
+                intent.putExtra("result",result);
 
-            getActivity().runOnUiThread(() -> imageViewDebug.setImageBitmap(result));
+                Activity activity = getActivity();
+                if (null != activity) {
+                    activity.setResult(Activity.RESULT_OK, intent);
+                    timer.cancel();
+                    activity.finish();
+                }
+            }
         }
     }
 
@@ -147,10 +156,9 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
             openCamera(width, height);
-            imageViewDebug = getActivity().findViewById(R.id.imageView_camera_debug);
             qrCodeDetector = new QrCodeDetector();
             timer = new Timer();
-            timer.schedule(new MyTimer(), 0, 1000);
+            timer.schedule(new MyTimer(), 0, 100);
         }
 
         @Override
